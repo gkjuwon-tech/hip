@@ -30,7 +30,7 @@
 2. **EsDeeKid – *Rebel*** (2025): UK 언더의 문을 연 작품
 3. **xaviersobased – *Xavier*** (2026): 저크가 앨범 단위로 정리된 작품
 4. **slayr – *Half Blood (BloodLuxe)*** (2026): 요청하신 그 사람. 2026 XXL 프레시맨
-5. **Lucy Bedroque – *c*** (2026.09): 지금 가장 따끈한 deadAir 신보
+5. **Lucy Bedroque – *c*** (2026.09): 지금 가장 따끈한 deadAir 신보 → 🔬 [딥다이브](deepdive/lucy-bedroque.md)
 
 ---
 
