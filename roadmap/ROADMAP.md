@@ -226,11 +226,11 @@
 | 5 | ⭐ **2hollis – *star*** (2025.04.04, Interscope) | **[A]** | 메이저 데뷔작. 15곡 38분. EDM/일렉트로팝/하이퍼팝 + 랩. 🔥 "flash", "nice" · 💎 "cope", "destroy me", "burn", "sidekick". Pitchfork 7.4, Metacritic 79 |
 | 6 | 🔜 **2hollis – *pirouette*** (2026.11.11 발매 예정) | **[A]** | 선공개: "hurt", "sex", "warhorse". 커버는 파이널판타지 일러스트레이터 아마노 요시타카. "트랙당 약 300 레이어"라고 함. **이 로드맵 졸업 시험 = 발매일에 첫 회차 듣고 리뷰 써보기** |
 | 7 | **OsamaSon – *Jump Out*** (2025.01) | **[A]** | AOTY 레이지 역대 순위 상위권. 💎 후속작 *psykotic*(2025.10)도 |
-| 8 | **Ken Carson – *More Chaos*** (2025.04) | **[A]** | *A Great Chaos* 속편 |
+| 8 | **Ken Carson – *More Chaos*** (2025.04) → ***xperiment*** (2026.07.03) | **[A]** | *A Great Chaos* 속편 → 빌보드 7위지만 Pitchfork 5.0. "레이지 정체기 논쟁" 교재 |
 | 9 | **Che – *Rest in Bass*** (2025.07) | **[A]** | Pitchfork 8.3 Best New Music. 디스토션 베이스와 인더스트리얼 신스. 언더 레이지의 정점 중 하나 |
 | 10 | **prettifun – *FunHouse (Deluxe)*** (2025) | **[A]** | 2025 레이지 유저 평점 상위권 |
 | 11 | **Nettspend – *Early Life Crisis*** (2026.03.06) | **[A]** ⚠️ | 정규 데뷔작. OsamaSon과 YoungBoy 피처링. 빌보드 200 39위. 평론은 엇갈림 |
-| 12 | **언더 디깅 리스트** | **[T]** | ST6 JodyBoof (*UW6*), Corey Lingo, bleood, Yung Fazo (*ZO*). 각자 인기곡 2–3개씩 |
+| 12 | 🗺️ **언더 심화 → [UNDERGROUND.md](UNDERGROUND.md)** | | 씬별 지도: Opium / 레이지 2세대 / 저크·Surf Gang / UK 언더 / ATL Ø Way / 플러그앤비 / 드레인 / 붐뱁 언더. 발매 캘린더와 디깅 방법 포함 |
 
 ### 7-B. 🏛️ 메인스트림 / 베테랑
 
@@ -250,7 +250,7 @@
 
 ---
 
-## 🗓️ 주간 스케줄 (총 약 17주)
+## 🗓️ 주간 스케줄 (총 약 20주)
 
 | 주차 | 페이즈 | 주요 과제 |
 |---|---|---|
@@ -261,6 +261,7 @@
 | 11–12 | Phase 5 | **WLR** → Ken Carson X → CMIYGL → Bandana → Earl/MIKE |
 | 13–14 | Phase 6 | **디스전 특강** → A Great Chaos → GNX → CHROMAKOPIA → boy → BAFK |
 | 15–17 | Phase 7 | MUSIC → Half Blood → Unmusique → c → star → LGSO → Rest in Bass → **pirouette (11/11)** |
+| 18–20 | Phase 7+ | [언더 지도](UNDERGROUND.md): 시작용 5장 → 씬 하나씩 주 2개 |
 
 ## 🎬 번역 영상 제작 우선순위 (2단계 작업용)
 
