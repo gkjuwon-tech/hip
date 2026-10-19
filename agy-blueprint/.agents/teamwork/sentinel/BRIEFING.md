@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-19T09:05:00Z
+# BRIEFING — 2026-10-19T09:38:30Z
 
 ## Mission
 Coordinate the RSI engine design project: route to Project Orchestrator, monitor progress via crons, enforce independent post-victory audit.
@@ -16,12 +16,12 @@ Coordinate the RSI engine design project: route to Project Orchestrator, monitor
 - Keep context ultra-light
 
 ## User Context
-- **Last user request**: Design recursive self-improvement (RSI) engine with <100M non-Transformer reasoning-only core and Korean 기획서 per BRIEF.md
+- **Last user request**: Binding update with AUDIT_FROM_CLAUDE.md: soft word counts, no code (plans only), immediate Phase B start incorporating audit attacks on sections 1 & 2.
 - **Pending clarifications**: none
-- **Delivered results**: none
+- **Delivered results**: Relayed binding update to Project Orchestrator.
 
 ## Project Status
-- **Phase**: in progress
+- **Phase**: in progress (transitioning to Phase B)
 - **Active Orchestrator**: 9d100903-3938-4939-8cb4-21dca26a45b4 (orchestrator_1)
 - **Crons**:
   - Cron 1 (Progress Reporting, */8): 35e41040-ddf7-4b38-af81-ae6329dd1512/task-22
@@ -33,6 +33,7 @@ Coordinate the RSI engine design project: route to Project Orchestrator, monitor
 - **Retry count**: 0
 
 ## Artifact Index
-- /home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md — Authoritative user request
+- /home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md — Authoritative user request (including 09:38:06Z follow-up)
 - /home/user/hip/agy-blueprint/.agents/teamwork/ORIGINAL_REQUEST.md — Mirror of authoritative user request
 - /home/user/hip/agy-blueprint/BRIEF.md — Binding project specification
+- /home/user/hip/agy-blueprint/AUDIT_FROM_CLAUDE.md — Binding external audit input for Phase B onward
