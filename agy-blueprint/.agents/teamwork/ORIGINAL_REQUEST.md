@@ -143,3 +143,16 @@ Concatenate `sections/00.md` … `sections/12.md` in order into **`FINAL_기획�
 - [ ] Safety mechanisms from §6 are present and structurally enforceable.
 - [ ] Every claim labeled ([검증됨: url], [추정], [가설]); zero hallucinated sources.
 - [ ] All 13 Korean sections generated, mutually consistent and matching `work/blueprint_final.md`, concatenated into `FINAL_기획서.md`, plus `work/RUN_SUMMARY.md`.
+
+## Follow-up — 2026-10-19T09:38:06Z
+
+URGENT: BINDING UPDATE FROM USER FOR PROJECT ORCHESTRATOR AND ALL WORKERS.
+
+An external audit of all five Phase A proposals has been placed at `/home/user/hip/agy-blueprint/AUDIT_FROM_CLAUDE.md`. It is BINDING input for Phase B onward (BRIEF.md hard constraints still apply).
+
+Three immediate process changes:
+1. Word counts are soft guidance only. The library and curiosity designers must stop counting or trimming words and submit their current proposals now. Do not write scripts that generate or assemble documents (`generate_proposal.py`, `assemble.py`); write documents directly.
+2. NO CODE anywhere in proposals, the blueprint, or the Korean sections. Experiments must be specified as plans only (inputs, procedure, measurement, control arm, pass and kill criteria, compute and time); implementation will be done by a separate engineer.
+3. Start Phase B immediately. Every red-teamer must read `/home/user/hip/agy-blueprint/AUDIT_FROM_CLAUDE.md` and attack its sections 1 and 2 in addition to its own findings, and every Phase C revision must fix them while keeping the ideas in section 3.
+
+Relay this immediately to the Project Orchestrator (9d100903-3938-4939-8cb4-21dca26a45b4) and ensure every worker enforces these rules.

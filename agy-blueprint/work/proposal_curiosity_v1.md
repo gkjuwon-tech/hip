@@ -13,27 +13,27 @@
 ## 1. Thesis
 
 ### 1.1 Why Teacher Distillation Caps at the Teacher
-Distilling reasoning traces from frontier models (Claude 3.5 Sonnet, Claude Opus 4, GPT-4o, GPT-6) traps the student inside the teacher's cognitive ceiling [검증됨: https://arxiv.org/abs/2504.13837v4]. A student trained via behavioral cloning cannot exceed the teacher's statistical support; supervised fine-tuning (SFT) transfers conversational surface formatting and stylistic cadence rather than fundamental mathematical correctness [검증됨: https://arxiv.org/abs/2504.13837v4]. Furthermore, frontier models are fallible "tin cans" (깡통): GPT-3.5 fails 21.9% of GSM8K [검증됨: https://arxiv.org/abs/2404.14219] and drops up to 65% on simple distractor clauses in GSM-Symbolic [검증됨: https://arxiv.org/abs/2410.05229]. Distillation hardcodes the teacher's blind spots into the student. The teacher is Rocket Stage 1: useful for liftoff, but relying on it for orbital acceleration guarantees a ceiling.
+Distilling reasoning traces from frontier models (Claude 3.5 Sonnet, Claude Opus 4, GPT-4o, GPT-6) traps students within the teacher's cognitive ceiling [검증됨: https://arxiv.org/abs/2504.13837v4]. Behavioral cloning cannot exceed the teacher's statistical support; supervised fine-tuning (SFT) transfers conversational cadence rather than underlying deductive validity [검증됨: https://arxiv.org/abs/2504.13837v4]. Furthermore, frontier models are fallible "tin cans" (깡통): GPT-3.5 fails 21.9% of GSM8K [검증됨: https://arxiv.org/abs/2404.14219] and drops up to 65% on simple distractor clauses in GSM-Symbolic [검증됨: https://arxiv.org/abs/2410.05229]. Distillation hardcodes these blind spots into the student. The teacher is Rocket Stage 1: essential for initial liftoff, but fatal if relied upon for orbital escape.
 
 ### 1.2 What Replaces the Teacher: Exact Mechanical Verifiers & Latent World Models
 RSI requires an objective signal that never degrades as capability grows:
-1. **Zero-Parameter Mechanical Verifiers**: Exact deterministic execution engines (Python interpreters, SymPy, Z3, Lean 4, VAL planning validator) that check correctness without neural approximations.
+1. **Zero-Parameter Mechanical Verifiers**: Exact deterministic execution engines (Python, SymPy, Z3, Lean 4, VAL) evaluate correctness without neural approximations.
 2. **Precedents of Verification Escapes**:
-   - AlphaGo Zero beat human-data AlphaGo 100–0 after 3 days of self-play with zero human games because Go rules provide an exact verifier [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/].
-   - TinyGSM showed a 1.3B student plus verifier beat its GPT-3.5 teacher (81.5% vs 77.4% on GSM8K) [검증됨: https://arxiv.org/html/2312.09241].
+   - AlphaGo Zero defeated human-data AlphaGo 100–0 after 3 days of self-play with zero human games because Go rules provide an exact verifier [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/].
+   - TinyGSM showed a 1.3B student plus verifier surpassed its GPT-3.5 teacher (81.5% vs 77.4% on GSM8K) [검증됨: https://arxiv.org/html/2312.09241].
    - DeepSeek-R1-Zero proved rule-based RL boosts reasoning without human data (AIME 2024 pass@1 15.6% to 77.9%) [검증됨: https://arxiv.org/html/2501.12948].
    - AlphaProof solved IMO problems in Lean 4 via formal search without human proof traces [검증됨: https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/].
 
 ### 1.3 Why the Curiosity / World-Model Loop Compounds
-In RLVR, progress stalls when random sampling fails on hard out-of-distribution problems [검증됨: https://arxiv.org/abs/2408.03314]. `ORRERY-Curiosity` solves this with a **JEPA-style latent world model** driven by **epistemic curiosity** [가설]:
+In RLVR, progress stalls when random sampling fails on hard out-of-distribution problems [검증됨: https://arxiv.org/abs/2408.03314]. `ORRERY-Curiosity` resolves this via a **JEPA latent world model** driven by **epistemic curiosity** [가설]:
 - **Latent Dynamics**: The core predicts transitions $z_{t+1} = \mathcal{T}(z_t, a_t)$ and verifier outcomes $\hat{v} = \mathcal{V}(z_t, a_t)$ in representation space rather than text tokens [검증됨: https://arxiv.org/abs/2509.14252].
-- **Epistemic Value**: The proposer actively samples problems maximizing world-model uncertainty (predictive disagreement across an ensemble) within reachable solvability bounds (PAIRED regret / AZR learnability) [검증됨: https://arxiv.org/pdf/2012.02096, https://arxiv.org/html/2505.03335v3].
-- **Compounding Flywheel**: Epistemic curiosity generates high-information rollouts $\to$ mechanical verifiers filter ground-truth $\to$ world model resolution improves $\to$ latent search prunes dead ends with higher fidelity.
+- **Epistemic Value**: The proposer samples problems maximizing world-model uncertainty (predictive disagreement across an ensemble) within reachable solvability bounds (PAIRED regret / AZR learnability) [검증됨: https://arxiv.org/pdf/2012.02096, https://arxiv.org/html/2505.03335v3].
+- **Compounding Flywheel**: Epistemic curiosity drives informative rollouts $\to$ mechanical verifiers filter ground truth $\to$ world model resolution improves $\to$ latent search prunes dead ends with higher fidelity.
 
 ### 1.4 Why Dropping Language Generation Makes Each Generation Cheaper
-1. **Elimination of Output Vocabulary**: Small LMs spend 40%–65% of weights on embeddings and LM heads (e.g. Gemma 3 270M spends 170M/270M on its 256k vocab [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/]; DeBERTa-v3-xsmall spends 48M/70M [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]). A compact formal IR of 2,048 tokens frees >85% of weights for recurrent reasoning layers [추정].
-2. **Dense Semantic Bandwidth**: Formal Python/SymPy IR expresses math in 35–60 tokens versus 300–800 verbose English tokens, cutting rollout FLOPs 5×–10× [추정].
-3. **Wall-Clock Speedup**: Generating 50 formal tokens on T4 takes ~15 ms versus ~350 ms for 500 English tokens, yielding 10× more search rollouts per hour under Kaggle's 30 GPU-hour quota [추정].
+1. **Eliminating Output Vocabulary**: Small LMs spend 40%–65% of weights on embeddings and LM heads (e.g., Gemma 3 270M spends 170M/270M on its 256k vocab [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/]; DeBERTa-v3-xsmall spends 48M/70M [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]). A compact formal IR of 2,048 tokens frees >85% of weights for recurrent reasoning layers [추정].
+2. **Dense Semantic Bandwidth**: Formal Python/SymPy IR expresses mathematical logic in 35–60 tokens versus 300–800 verbose English tokens, cutting rollout FLOPs 5×–10× [추정].
+3. **Wall-Clock Speedup**: Emitting 50 formal tokens on T4 takes ~15 ms versus ~350 ms for 500 English tokens, yielding 10× more search rollouts per hour under Kaggle's 30 GPU-hour quota [추정].
 
 ---
 
@@ -43,28 +43,27 @@ In RLVR, progress stalls when random sampling fails on hard out-of-distribution 
 +-----------------------------------------------------------------------------------------+
 |                                ORRERY-Curiosity RSI LOOP                                |
 +-----------------------------------------------------------------------------------------+
-|  1. PROPOSE (Epistemic Curiosity)               2. SOLVE / SEARCH (Latent JEPA MCTS)    |
-|  - Active Proposer Head samples tasks           - Internal latent state rollouts        |
-|  - Maximizes Expected Information Gain (EIG)    - Emits formal IR program scripts       |
-|            |                                              |                             |
-|            v Task Specification                           v Formal Script (Python/Lean) |
-|  6. EXPAND DOMAINS & CURRICULUM                 3. VERIFY (Zero-Parameter Sandbox)      |
-|  - S-Curve Staircase: Arithmetic ->             - Isolated nsjail subprocess            |
-|    SymPy -> Lean 4 -> Code -> Bio Sim           - Deterministic check: v in {0, 1}      |
-|            ^                                              |                             |
-|            | S-curve transition trigger                   v Ground-Truth Signal         |
-|  5. TRAIN DUAL OBJECTIVE                        4. SELECT & RESIDUAL                    |
-|  - L_policy: Expert Iteration on verified traces- Filter verified successes (v = 1)     |
-|  - L_JEPA: Latent transition error minimization - Compute residual surprise for EIG     |
+| 1. PROPOSE (Epistemic Curiosity)               2. SOLVE / SEARCH (Latent JEPA MCTS)     |
+| - Proposer samples tasks via EIG               - Latent state rollouts via JEPA         |
+|           |                                              |                              |
+|           v Task Specification                           v Formal Script (Python/Lean)  |
+| 6. EXPAND DOMAINS & CURRICULUM                 3. VERIFY (Zero-Parameter Sandbox)       |
+| - S-Curve Staircase: Arithmetic ->             - Isolated nsjail subprocess             |
+|   SymPy -> Lean 4 -> Code -> Bio Sim           - Deterministic check: v in {0, 1}       |
+|           ^                                              |                              |
+|           | S-curve transition trigger                   v Ground-Truth Signal          |
+| 5. TRAIN DUAL OBJECTIVE                        4. SELECT & RESIDUAL                     |
+| - L_policy: Expert Iteration on verified runs  - Filter verified successes (v = 1)      |
+| - L_JEPA: Latent transition error loss         - Compute residual surprise for EIG      |
 +-----------------------------------------------------------------------------------------+
 ```
 
 ### 2.1 The Generation Loop Step-by-Step
 Every generation $g \in \{1, 2, \dots, N\}$ executes an autonomous 6-stage lifecycle:
-1. **Stage 1: Propose (Epistemic Curiosity / Active Sampling)**: The proposer module samples problem configurations $x \sim \mathcal{P}_\theta$ ranked by **Expected Information Gain (EIG)** [가설]:
+1. **Stage 1: Propose (Epistemic Curiosity / Active Sampling)**: Proposer samples configurations $x \sim \mathcal{P}_\theta$ ranked by **Expected Information Gain (EIG)** [가설]:
    $$\mathcal{I}(x) = \mathbb{E}_{a \sim \pi} \left[ \frac{1}{M} \sum_{m=1}^M \left\| \hat{z}^{(m)}_{t+1} - \bar{z}_{t+1} \right\|_2^2 \right]$$
-   where $M=3$ lightweight predictor heads predict the next latent state. Unsolvable noise or trivial tasks are down-weighted via asymmetric regret: $\mathcal{R}(x) = \text{clip}(\text{Acc}_{\text{target}} - \text{Acc}_{\text{current}}, 0, 1) \cdot \mathcal{I}(x)$ [검증됨: https://arxiv.org/pdf/2012.02096, https://arxiv.org/html/2505.03335v3].
-2. **Stage 2: Solve / Search (In-Latent Planning + Formal IR Decoding)**: The core encodes input text into latent $z_0$. MCTS search evaluates transitions in latent space via JEPA transition model $z_{t+1} = \mathcal{T}(z_t, a_t)$ and value head $\hat{v}_t = \mathcal{V}(z_t)$, pruning dead ends prior to external execution [검증됨: https://arxiv.org/abs/2501.04519, https://arxiv.org/abs/2509.14252], terminating in formal IR scripts (Python/SymPy/Z3/Lean).
+   with $M=3$ predictor heads. Noise or trivial tasks are down-weighted via asymmetric regret: $\mathcal{R}(x) = \text{clip}(\text{Acc}_{\text{target}} - \text{Acc}_{\text{current}}, 0, 1) \cdot \mathcal{I}(x)$ [검증됨: https://arxiv.org/pdf/2012.02096, https://arxiv.org/html/2505.03335v3].
+2. **Stage 2: Solve / Search (In-Latent Planning + Formal IR Decoding)**: The core encodes input text into latent $z_0$. MCTS evaluates transitions in latent space via JEPA transition model $z_{t+1} = \mathcal{T}(z_t, a_t)$ and value head $\hat{v}_t = \mathcal{V}(z_t)$, pruning dead ends prior to external execution [검증됨: https://arxiv.org/abs/2501.04519, https://arxiv.org/abs/2509.14252], terminating in formal IR scripts (Python/SymPy/Z3/Lean).
 3. **Stage 3: Verify (Mechanical Zero-Parameter Verification)**: Formal scripts run in isolated `nsjail` sandboxes [검증됨: https://metr.org/evaluations/openai-o3-report/], returning binary outcome $v \in \{0, 1\}$ and execution output with 0 learned parameters.
 4. **Stage 4: Filter & Residual Compute**: Verified traces ($v=1$) are retained for distillation. Latent prediction errors $\mathcal{E}_t = \|z_{t+1} - \hat{z}_{t+1}\|_2^2$ update the curiosity distribution.
 5. **Stage 5: Train (Dual-Objective Gradient Step)**: Joint loss over accumulated replay buffers:
@@ -81,7 +80,7 @@ Every generation $g \in \{1, 2, \dots, N\}$ executes an autonomous 6-stage lifec
 
 ### 2.3 The Teacher Bootloader & Measurable Cord-Cut Criterion
 - **Stage 0 Bootloader**: Open-licensed synthetic datasets (Cosmopedia, OpenMathInstruct-2, FineMath-4+, Reasoning Gym) provide initial grounding. **Zero GPT-3.5 or GPT-4 tokens permitted** [검증됨: https://openai.com/en-GB/policies/terms-of-use/].
-- **Cord-Cut Criterion**: The teacher cord is cut when both conditions hold simultaneously [가설]:
+- **Cord-Cut Criterion**: The teacher cord is severed when both conditions hold simultaneously [가설]:
   1. $\Delta_{\text{teacher\_fail}}(g) > 0$ for 2 consecutive generations on held-out tasks failed across 8 teacher samples.
   2. $S_g(\text{Held-Out Valid}) \ge S_{\text{teacher}}(\text{Held-Out Valid}) + 2.0\%$.
 - **Post-Cut Fuel**: 100% self-generated formal rollouts verified by 0-parameter engines, procedural generators (Reasoning Gym, re-ARC), and curiosity-driven self-play.
@@ -168,19 +167,14 @@ Computed autonomously by an isolated read-only evaluator on frozen held-out sets
 ```
 
 ### 5.2 Structured Output Schema Sent to Renderer
-The core emits strictly structured JSON. The renderer never sees natural language prompts:
+The core emits strictly structured JSON without natural language reasoning:
 ```json
 {
   "task_domain": "symbolic_math",
   "problem_signature_hash": "a7f4b29c",
   "formal_ir_type": "python_sympy",
   "formal_program": "from sympy import symbols, Eq, solve\nx = symbols('x')\neq = Eq(3*x + 15, 42)\nsol = solve(eq, x)\nresult = sol[0]",
-  "verifier_trace": {
-    "engine": "python3_sandbox",
-    "exit_code": 0,
-    "stdout": "9",
-    "execution_time_ms": 14.2
-  },
+  "verifier_trace": {"engine": "python3_sandbox", "exit_code": 0, "stdout": "9", "execution_time_ms": 14.2},
   "verified_answer": "9",
   "confidence_score": 0.994
 }
