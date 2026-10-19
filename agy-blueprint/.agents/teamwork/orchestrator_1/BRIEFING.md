@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-19T09:05:40Z
+# BRIEFING — 2026-10-19T09:08:35Z
 
 ## Mission
 Design from scratch a recursive self-improvement (RSI) engine with a <100M parameter non-Transformer reasoning-only core and deliver a complete, technically precise, and hilarious Korean design document (기획서) per BRIEF.md across 7 phases.
@@ -12,7 +12,7 @@ Design from scratch a recursive self-improvement (RSI) engine with a <100M param
 
 ## 🔒 My Workflow
 - **Pattern**: Project
-- **Scope document**: /home/user/hip/agy-blueprint/PROJECT.md
+- **Scope document**: /home/user/hip/agy-blueprint/.agents/teamwork/orchestrator_1/PROJECT.md
 1. **Decompose**: 7-phase execution per BRIEF.md:
    - Phase A: 5 parallel proposals (library, depth, search, curiosity, minimal)
    - Phase B: 5 red team critiques
@@ -25,7 +25,7 @@ Design from scratch a recursive self-improvement (RSI) engine with a <100M param
 3. **On failure**: Retry -> Replace -> Skip -> Redistribute -> Redesign
 4. **Succession**: Track spawn count; self-succeed when threshold (16) is reached
 - **Work items**:
-  1. Phase A: 5 Independent Proposals [pending]
+  1. Phase A: 5 Independent Proposals [in-progress]
   2. Phase B: 5 Red Team Critiques [pending]
   3. Phase C: 5 Revisions [pending]
   4. Phase D: Judging [pending]
@@ -51,24 +51,31 @@ Design from scratch a recursive self-improvement (RSI) engine with a <100M param
 
 ## Key Decisions Made
 - Executing Phase A with 5 parallel workers dedicated to the 5 philosophies in BRIEF.md: library, depth, search, curiosity, minimal.
+- Created PROJECT.md and scheduled heartbeat cron (task-27).
+- Dispatched 5 parallel workers for Phase A.
 
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
+| worker_proposal_library | teamwork_preview_worker | proposal_library_v1.md | in-progress | 37447c56-8cb1-4d12-ac2f-0fc53c6efaca |
+| worker_proposal_depth | teamwork_preview_worker | proposal_depth_v1.md | in-progress | 0210b3e9-0472-40f5-aa62-ae2f15f476c9 |
+| worker_proposal_search | teamwork_preview_worker | proposal_search_v1.md | in-progress | ce110464-5a29-4198-a911-fd250d7ff597 |
+| worker_proposal_curiosity | teamwork_preview_worker | proposal_curiosity_v1.md | in-progress | c8462f02-af5f-48e9-b7dd-7111d839bb71 |
+| worker_proposal_minimal | teamwork_preview_worker | proposal_minimal_v1.md | in-progress | dbaadd34-f1c1-45f1-b196-89c5f77b4bcd |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 0 / 16
-- Pending subagents: none
+- Spawn count: 5 / 16
+- Pending subagents: 37447c56-8cb1-4d12-ac2f-0fc53c6efaca, 0210b3e9-0472-40f5-aa62-ae2f15f476c9, ce110464-5a29-4198-a911-fd250d7ff597, c8462f02-af5f-48e9-b7dd-7111d839bb71, dbaadd34-f1c1-45f1-b196-89c5f77b4bcd
 - Predecessor: none
 - Successor: not yet spawned
 
 ## Active Timers
-- Heartbeat cron: not started
-- Safety timer: none
+- Heartbeat cron: 9d100903-3938-4939-8cb4-21dca26a45b4/task-27
+- Safety timer: none (covered by heartbeat cron)
 
 ## Artifact Index
 - /home/user/hip/agy-blueprint/BRIEF.md — Binding specification
 - /home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md — Original request
-- /home/user/hip/agy-blueprint/PROJECT.md — Global project plan
+- /home/user/hip/agy-blueprint/.agents/teamwork/orchestrator_1/PROJECT.md — Global project plan
 - /home/user/hip/asi-blueprint/research/ — Verified research directory
