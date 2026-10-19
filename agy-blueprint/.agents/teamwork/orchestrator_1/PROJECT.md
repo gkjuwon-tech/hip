@@ -26,8 +26,8 @@
 | B | Phase B: Red Team | `work/critique_{library,depth,search,curiosity,minimal}.md` | Phase A | DONE |
 | C | Phase C: 5 Revisions | `work/proposal_{library,depth,search,curiosity,minimal}_v2.md` | Phase B | DONE |
 | D | Phase D: Judging | `work/judging.md` (scoring, grafting analysis, spine selection) | Phase C | DONE |
-| E | Phase E: Synthesis | `work/blueprint.md` with Canonical Numbers Sheet | Phase D | PLANNED |
-| F | Phase F: Audits | `work/audit_completeness.md`, `work/audit_numbers.md`, `work/blueprint_final.md` | Phase E | PLANNED |
+| E | Phase E: Synthesis | `work/blueprint.md` with Canonical Numbers Sheet | Phase D | DONE |
+| F | Phase F: Audits | `work/audit_completeness.md`, `work/audit_numbers.md`, `work/blueprint_final.md` | Phase E | IN_PROGRESS |
 | G | Phase G: Korean 기획서 | `sections/00.md`..`12.md`, `FINAL_기획서.md`, `work/RUN_SUMMARY.md` | Phase F | PLANNED |
 
 ## Code & Artifact Layout
