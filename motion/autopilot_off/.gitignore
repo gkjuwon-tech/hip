@@ -3,3 +3,4 @@ renders/
 *.wav
 *.blend
 *.blend1
+__pycache__/
