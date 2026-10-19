@@ -9,33 +9,20 @@
 ## 1. Thesis
 
 ### 1.1 Why Teacher Distillation Caps at the Teacher
-Distilling reasoning traces from frontier LLMs (e.g., Claude 3.5 Sonnet, GPT-4o) trains a student to match the teacher's posterior distribution $P_{\text{teacher}}(y|x)$ [검증됨: https://arxiv.org/abs/2303.08774]. However, frontier models are fundamentally "tin cans" (깡통) when measured against the North Star of Artificial Superintelligence (solving open mathematical conjectures, formal scientific synthesis, automated drug discovery). They hallucinate non-existent identities, fail on complex multi-hop compositional reasoning graphs, and exhibit catastrophic degradation under minor perturbations (e.g., GSM-Symbolic proves that inserting a single irrelevant clause causes performance drops of up to 65% across frontier models [검증됨: https://arxiv.org/abs/2410.05229]). 
-
-Distillation inevitably forces the student to inherit the teacher’s inductive blind spots and reasoning failures. The student's reachable capability ceiling $C_{\text{student}}$ is strictly bounded by the teacher's capability manifold $C_{\text{teacher}}$: $\text{supp}(P_{\text{student}}) \subseteq \text{supp}(P_{\text{teacher}})$ [가설]. Imitating an imperfect teacher cannot yield an ASI-level reasoner.
+Distilling reasoning traces from frontier LLMs (e.g., Claude 3.5 Sonnet, GPT-4o) trains a student to match the teacher's conditional output distribution $P_{\text{teacher}}(y|x)$ [검증됨: https://arxiv.org/abs/2303.08774]. However, frontier models are fundamentally "tin cans" (깡통) when evaluated against the North Star of Artificial Superintelligence (solving open mathematical conjectures, formal scientific synthesis, automated drug discovery). They hallucinate non-existent identities, fail on multi-hop compositional reasoning graphs, and exhibit severe degradation under minor perturbations (e.g., GSM-Symbolic proves that inserting a single irrelevant clause causes performance drops up to 65% across frontier models [검증됨: https://arxiv.org/abs/2410.05229]). Distillation inevitably forces the student to inherit the teacher’s inductive blind spots, bounding student capability within the teacher's manifold: $\text{supp}(P_{\text{student}}) \subseteq \text{supp}(P_{\text{teacher}})$ [가설]. Imitating an imperfect teacher cannot yield an ASI-level reasoner.
 
 ### 1.2 What Replaces the Teacher: Exact Verifiers and Search
-To transcend the teacher ceiling, the supervisory signal must originate from sources that possess **no ceiling whatsoever**: **0-parameter exact mechanical verifiers** (Python execution sandboxes, SymPy computer algebra systems, Z3 SMT solvers, Lean 4 interactive theorem provers, deterministic unit tests, and game rule engines) coupled with **Monte Carlo Tree Search (MCTS)** over formal reasoning steps [추정].
-
-A mechanical verifier does not guess, suffer cognitive fatigue, or hallucinate. The rules of Go are simple, yet AlphaGo Zero, utilizing pure MCTS self-play without a single human demonstration, defeated human-data-trained AlphaGo Lee 100–0 [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. In mathematics, AlphaProof achieved an IMO silver-medal benchmark (28/42 points) by searching formal proofs in Lean 4 without human informal proof sketches [검증됨: https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/]. Absolute Zero demonstrated that a model proposing its own coding tasks and verifying them via Python execution achieves consistent gains across reasoning benchmarks without any external human data [검증됨: https://arxiv.org/html/2505.03335v3]. The verifier, not the teacher, provides the infinite-fuel ground truth.
+To transcend the teacher ceiling, supervisory signals must originate from sources that possess **no ceiling whatsoever**: **0-parameter exact mechanical verifiers** (Python execution sandboxes, SymPy computer algebra systems, Z3 SMT solvers, Lean 4 interactive theorem provers, deterministic unit tests, and game rule engines) coupled with **Monte Carlo Tree Search (MCTS)** over formal reasoning steps [추정]. A mechanical verifier does not guess, suffer cognitive fatigue, or hallucinate. AlphaGo Zero, utilizing pure MCTS self-play without human demonstrations, defeated human-data-trained AlphaGo Lee 100–0 [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. AlphaProof achieved an IMO silver medal (28/42) by searching formal proofs in Lean 4 without human proof sketches [검증됨: https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/]. Absolute Zero demonstrated that a model proposing its own coding tasks and verifying them via Python execution achieves consistent gains across reasoning benchmarks without external human data [검증됨: https://arxiv.org/html/2505.03335v3]. The verifier, not the teacher, provides infinite-fuel ground truth.
 
 ### 1.3 Why This Loop Compounds
 The combination of MCTS and exact verification functions as a provable **policy improvement operator** $\mathcal{I}$ [검증됨: https://en.wikipedia.org/wiki/AlphaZero]:
 $$\pi_{\text{search}}(a|s) = \mathcal{MCTS}(\pi_{\theta}, V_{\phi}, \text{Verifier})$$
-Because MCTS systematically explores branching decision trees, prunes invalid paths via interim verifier checks, and aggregates terminal verification rewards $z \in \{-1, +1\}$, the search distribution $\pi_{\text{search}}$ is strictly stronger than the raw policy prior $\pi_{\theta}$: $\mathbb{E}[V(s') | \pi_{\text{search}}] \ge \mathbb{E}[V(s') | \pi_{\theta}]$ [추정].
-
-Under **Expert Iteration (ExIt)**, the core network's policy head is trained via cross-entropy to predict $\pi_{\text{search}}$, while the value head is trained to predict $z$. By distilling the amplified search distribution back into base weights, the policy in generation $g+1$ begins its search from a higher baseline competence. This expanded baseline enables MCTS in generation $g+1$ to reach deeper tree depths and solve problems that were completely intractable at generation $g$. The amplification gap $\Delta = \text{Score}(\text{Search}) - \text{Score}(\text{Policy})$ is continuously harvested and crystallized into network parameters [가설].
+Because MCTS systematically explores branching decision trees, prunes invalid paths via interim verifier checks, and aggregates terminal verification rewards $z \in \{-1, +1\}$, the search distribution $\pi_{\text{search}}$ is strictly stronger than the raw policy prior: $\mathbb{E}[V(s') | \pi_{\text{search}}] \ge \mathbb{E}[V(s') | \pi_{\theta}]$ [추정]. Under **Expert Iteration (ExIt)**, the core network's policy head is trained via cross-entropy to predict $\pi_{\text{search}}$, while the value head predicts $z$. Distilling amplified search distributions back into base weights allows generation $g+1$ to begin search from a higher baseline competence, enabling deeper tree search over harder problems. The amplification gap $\Delta = \text{Score}(\text{Search}) - \text{Score}(\text{Policy})$ is continuously harvested and crystallized into network parameters [가설].
 
 ```
-                +-------------------------------------------+
-                |          Verifier Engine (0 Params)       |
-                |   [Python / SymPy / Z3 / Lean 4 / Tests]  |
-                +---------------------+---------------------+
-                                      ^
-                                      | Exact Outcomes (z)
-                                      v
 +------------------+   PUCT Guided   +---------------------+   Distill Search   +------------------+
 | Current Policy & | --------------> |      MCTS Search    | -----------------> | Updated Policy & |
-|    Value Core    |   Action Prior  |  (Step-wise Branch) |     Targets        |    Value Core    |
+|    Value Core    |   Action Prior  | (0-Param Verifiers) |     Targets        |    Value Core    |
 | (Gen g: <100M)   |                 |  Policy: pi_search  |  (pi_search, z)    | (Gen g+1: <100M) |
 +------------------+                 +---------------------+                    +------------------+
         ^                                                                                |
@@ -43,12 +30,10 @@ Under **Expert Iteration (ExIt)**, the core network's policy head is trained via
 ```
 
 ### 1.4 Why Dropping Language Generation Makes Each Generation Cheaper
-Human natural language is computationally inefficient for reasoning. In standard generative LLMs, 50% to 70% of the entire parameter budget and floating-point operations (FLOPs) are squandered on vocabulary embeddings (e.g., Gemma 3 270M expends 170M parameters solely on its 256k vocabulary [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/]), grammatical agreement, stylistic flair, and conversational chit-chat.
-
-By pivoting to the **"Aphasic Genius"** paradigm, the core network reads and comprehends natural language inputs directly, but **never generates natural language**. It emits only compact, formal representations: structured intermediate reasoning traces (Program ASTs, Lean tactics, symbolic equations) and terminal answers (integers, LaTeX expressions, boolean flags, or input pointer spans).
-1. **Token Economy**: A multi-paragraph Chain-of-Thought (CoT) requiring 800–1,500 natural language tokens collapses into a 50–120 token formal Python/SymPy program [추정].
+Human natural language is computationally inefficient for reasoning. In standard generative LLMs, 50% to 70% of parameter budgets and FLOPs are squandered on vocabulary embeddings (e.g., Gemma 3 270M expends 170M parameters solely on its 256k vocabulary [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/]), grammatical agreement, stylistic flair, and conversational chit-chat. By pivoting to the **"Aphasic Genius"** paradigm, the core reads natural language inputs directly, but **never generates natural language**. It emits only compact, formal representations: structured intermediate reasoning traces (Program ASTs, Lean tactics, symbolic equations) and terminal answers (integers, LaTeX expressions, boolean flags, or input pointer spans).
+1. **Token Economy**: A multi-paragraph Chain-of-Thought (800–1,500 natural language tokens) collapses into a 50–120 token formal Python/SymPy program [추정].
 2. **Search Efficiency**: MCTS over a compact formal action space with deterministic syntactic grammar masking reduces the branching factor from thousands of natural language tokens to 10–30 valid semantic operators [추정].
-3. **Throughput**: On free-tier hardware (NVIDIA T4), generating 100 formal tokens takes ~0.08 seconds, allowing 10x more MCTS tree simulations per unit of wall-clock time compared to verbose text decoders [추정].
+3. **Throughput**: On NVIDIA T4 GPUs, generating 100 formal tokens takes ~0.08s, allowing 10x more MCTS tree simulations per unit of wall-clock time compared to verbose text decoders [추정].
 
 ---
 
@@ -63,90 +48,52 @@ Each RSI generation $g \to g+1$ executes an autonomous 6-stage pipelined loop:
      +------------------------------------- Cycle Repeats (Gen g+1) <-----------------------------------------------+
 ```
 
-1. **Stage 1: Problem Proposal (L2)**:
-   - **Procedural Domain Generators**: Deterministic programmatic generators (Reasoning Gym [검증됨: https://arxiv.org/pdf/2505.24760], re-ARC [검증됨: https://arxiv.org/pdf/2404.07353], SymPy polynomial/calculus generators, CLRS algorithmic trace synthesizers [검증됨: https://arxiv.org/html/2209.11142]) supply structurally sound, decontaminated problems across calibrated difficulty tiers.
-   - **Absolute-Zero Proposer**: The core's proposer head emits novel problem specifications $(x_{\text{spec}}, \text{constraints})$ rewarded by **solver regret / learnability progress** [검증됨: https://arxiv.org/abs/2505.03335]:
-     $$R_{\text{proposer}} = \mathbb{I}(\text{solvable}) \cdot \left(1 - \text{Accuracy}_{\text{solver}}(x_{\text{spec}})\right)$$
-     Tasks that are trivially solved ($>90\%$) or completely unsolvable ($<5\%$) yield zero reward, forcing the proposer to target the active learning frontier.
-2. **Stage 2: MCTS Over Formal Reasoning Steps**:
-   For each problem $x$, the core executes MCTS over discrete formal reasoning steps (nodes = partial programs / proof tactics; edges = syntactic action tokens). Simulations select actions via Polynomial Upper Confidence Trees (PUCT):
+1. **Stage 1: Problem Proposal (L2)**: Programmatic generators (Reasoning Gym [검증됨: https://arxiv.org/pdf/2505.24760], re-ARC [검증됨: https://arxiv.org/pdf/2404.07353], SymPy generators, CLRS trace synthesizers [검증됨: https://arxiv.org/html/2209.11142]) supply calibrated problems. Simultaneously, the core's proposer head emits novel problem specifications $(x_{\text{spec}}, \text{constraints})$ rewarded by **solver regret / learnability progress** [검증됨: https://arxiv.org/abs/2505.03335]:
+   $$R_{\text{proposer}} = \mathbb{I}(\text{solvable}) \cdot \left(1 - \text{Accuracy}_{\text{solver}}(x_{\text{spec}})\right)$$
+   Tasks that are trivially solved ($>90\%$) or completely unsolvable ($<5\%$) yield zero reward, forcing the proposer to target the active learning frontier.
+2. **Stage 2: MCTS Over Formal Reasoning Steps**: For each problem $x$, the core executes MCTS over discrete formal reasoning steps (nodes = partial programs / proof tactics; edges = syntactic action tokens). Simulations select actions via Polynomial Upper Confidence Trees (PUCT):
    $$a_t = \arg\max_a \left( Q(s, a) + c_{\text{puct}} \cdot P(a|s) \cdot \frac{\sqrt{\sum_b N(s, b)}}{1 + N(s, a)} \right)$$
    where policy prior $P(a|s)$ and state evaluation $V(s)$ are computed by the shared Gated DeltaNet core.
-3. **Stage 3: Exact External Verification**:
-   When an MCTS rollout reaches a terminal node or intermediate execution breakpoint, the state is passed to the isolated 0-parameter verification harness (Python 3.12 sandbox, SymPy CAS, Z3 SMT solver, or Lean 4 REPL). The verifier returns a binary outcome $z \in \{-1, +1\}$ and execution stdout/stderr in $<5\text{ms}$.
-4. **Stage 4: Selection and Replay Buffer Curation**:
-   Only trajectories confirmed correct by the mechanical verifier ($z = +1$) are admitted into the Expert Replay Buffer $\mathcal{D}_g^*$. For each visited state $s_t$, normalized MCTS visit counts $\pi_t = [N(s_t, a) / \sum_b N(s_t, b)]$ and terminal outcome $z$ are recorded as supervised training targets. Negative trajectories ($z = -1$) are retained exclusively for training the value head $V_\phi(s)$.
-5. **Stage 5: Expert Iteration Weight Update (L1)**:
-   The core's parameters are updated over $\mathcal{D}_g^*$ using a joint loss function:
+3. **Stage 3: Exact External Verification**: Terminal or intermediate states are passed to the isolated 0-parameter verification harness (Python 3.12 sandbox, SymPy CAS, Z3 SMT solver, or Lean 4 REPL), returning binary outcome $z \in \{-1, +1\}$ in $<5\text{ms}$.
+4. **Stage 4: Selection and Replay Buffer Curation**: Correct trajectories ($z = +1$) enter the Expert Replay Buffer $\mathcal{D}_g^*$. Normalized MCTS visit counts $\pi_t = [N(s_t, a) / \sum_b N(s_t, b)]$ and terminal outcome $z$ are recorded as supervised targets. Negative trajectories ($z = -1$) train the value head $V_\phi(s)$.
+5. **Stage 5: Expert Iteration Weight Update (L1)**: Parameters are updated over $\mathcal{D}_g^*$ using a joint loss:
    $$\mathcal{L}(\theta, \phi) = \mathbb{E}_{(s, \pi, z) \sim \mathcal{D}_g^*} \left[ -\sum_a \pi(a) \log P_\theta(a|s) + \alpha (z - V_\phi(s))^2 \right] + \lambda_{\text{prop}} \mathcal{L}_{\text{proposer}}$$
-   where $\alpha = 0.5$ balances policy gradient and value estimation.
-6. **Stage 6: Library and Domain Expansion (L2/L3)**:
-   Verified solution ASTs are passed to a Stitch-style symbolic compression algorithm [검증됨: https://arxiv.org/abs/2006.08381v1, https://arxiv.org/html/2310.19791v2] to extract recurring structural subroutines. These are added to the formal Domain Specific Language (DSL) library as 0-parameter callable primitives, permanently reducing future search depth.
+   with $\alpha = 0.5$ balancing policy gradient and value estimation.
+6. **Stage 6: Library and Domain Expansion (L2/L3)**: Verified solution ASTs are compressed via Stitch-style symbolic abstraction [검증됨: https://arxiv.org/abs/2006.08381v1, https://arxiv.org/html/2310.19791v2] into 0-parameter reusable macro-primitives, shrinking future search depth.
 
 ### 2.2 RSI Levels L1 Through L5
 - **L1 (Weight Evolution)**: Policy and value networks update parameters $\theta, \phi$ exclusively on verified self-generated search data.
-- **L2 (Curriculum Evolution)**: Proposer-vs-solver self-play autonomously adjusts problem complexity and task distributions based on empirical regret, preventing curriculum stagnation.
-- **L3 (Skill Library Accumulation)**: Non-parametric program abstractions are compressed into a global macro-library. Capability grows without adding neural parameters.
-- **L4 (Procedural Meta-Optimization)**: AlphaEvolve-style evolutionary search over procedural data generators, MCTS hyperparameter schedules (temperature, exploration constant $c_{\text{puct}}$), and custom JAX/Triton scan kernels [검증됨: https://deepmind.google/discover/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/]. **Strictly gated by mandatory human review.**
-- **L5 (Architectural Self-Redesign)**: Autonomous neural architecture search (NAS) over non-Transformer topologies. Confined to the North Star horizon; completely locked during initial phases.
+- **L2 (Curriculum Evolution)**: Proposer-vs-solver self-play autonomously adjusts problem complexity based on empirical regret.
+- **L3 (Skill Library Accumulation)**: Non-parametric program abstractions are compressed into a global macro-library, growing capability without adding neural parameters.
+- **L4 (Procedural Meta-Optimization)**: AlphaEvolve-style evolutionary search over procedural data generators, MCTS hyperparameter schedules, and JAX/Triton scan kernels [검증됨: https://deepmind.google/discover/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/]. **Strictly gated by human review.**
+- **L5 (Architectural Self-Redesign)**: Autonomous neural architecture search over non-Transformer topologies. Confined to North Star; locked during initial phases.
 
 ### 2.3 Teacher Bootloader and the Cord-Cut Criterion
-- **Stage 0 Bootloader**: A strictly open-weight teacher dataset (OpenMathInstruct-2 from Llama-3.1-405B [검증됨: https://huggingface.co/datasets/nvidia/OpenMathInstruct-2]; Python-Edu from The Stack v2 [검증됨: https://huggingface.co/datasets/HuggingFaceTB/smollm-corpus]; strictly 0% GPT-3.5/GPT-4 data) warm-starts the network (5B tokens) to endow valid syntax generation and non-zero base success rate ($P_{\text{base}} > 0$).
-- **The Cord-Cut Criterion (Rocket Stage 1 Separation)**:
-  The teacher umbilical cord is permanently severed when the following quantitative milestone is verified on a commit-revealed held-out benchmark:
-  $$\Delta_{\text{TE}}(g) = \frac{|\{x \in \mathcal{D}_{\text{held-out}}^{\text{teacher\_fail}} : \text{Solve}(x) = 1\}|}{|\mathcal{D}_{\text{held-out}}^{\text{teacher\_fail}}|} \ge 0.25$$
-  $$\text{and } \Delta_{\text{TE}}(g) > \Delta_{\text{TE}}(g-1) > \Delta_{\text{TE}}(g-2)$$
-  **Operational Rule**: When the core solves $\ge 25\%$ of held-out problems failed by the teacher (measured over $k=8$ teacher samples), and demonstrates strictly positive Teacher-Exceedance growth for two consecutive generations ($g-1, g$) with zero new teacher data, Stage 1 booster separation occurs. The teacher dataset is permanently archived and deleted from the active pipeline [가설].
-- **Fuel After the Cut**: The engine runs entirely on:
-  1. Infinite procedural generator streams (SymPy, Reasoning Gym).
-  2. Absolute-Zero proposer self-play regret loops.
-  3. MCTS search amplification over exact 0-parameter verifiers.
-  4. L3 compressed program libraries.
+- **Stage 0 Bootloader**: Open-weight teacher data (OpenMathInstruct-2 from Llama-3.1-405B [검증됨: https://huggingface.co/datasets/nvidia/OpenMathInstruct-2]; Python-Edu from The Stack v2 [검증됨: https://huggingface.co/datasets/HuggingFaceTB/smollm-corpus]; strictly 0% GPT-3.5/GPT-4 data) warm-starts the network (5B tokens) to endow valid syntax generation and non-zero base success rate ($P_{\text{base}} > 0$).
+- **Cord-Cut Criterion (Rocket Stage 1 Separation)**: The teacher cord is permanently severed when verified on a commit-revealed held-out benchmark:
+  $$\Delta_{\text{TE}}(g) = \frac{|\{x \in \mathcal{D}_{\text{held-out}}^{\text{teacher\_fail}} : \text{Solve}(x) = 1\}|}{|\mathcal{D}_{\text{held-out}}^{\text{teacher\_fail}}|} \ge 0.25 \quad \text{and} \quad \Delta_{\text{TE}}(g) > \Delta_{\text{TE}}(g-1) > \Delta_{\text{TE}}(g-2)$$
+  When the core solves $\ge 25\%$ of teacher-failed problems ($k=8$ teacher samples) and shows positive Teacher-Exceedance growth for two consecutive generations with zero teacher data, Stage 1 booster separation occurs. The teacher dataset is permanently archived [가설].
+- **Fuel After the Cut**: Procedural generator streams, Absolute-Zero proposer regret loops, MCTS search amplification, and L3 program libraries.
 
 ### 2.4 The S-Curve Staircase of Verifier Domains
-Technological progress in RSI does not follow a single continuous exponential; it follows an **S-curve staircase**, directly analogous to Moore’s Law transitioning across lithography nodes [가설]:
-
-```
-Capability
-   ^                                                                     (North Star: ASI)
-   |                                                                  __/ Simulators & Drug
-   |                                                               __/    Discovery
-   |                                                            __/ Formal Proof (Lean 4)
-   |                                                         __/ & Code (Python/Tests)
-   |                                                      __/
-   |                                           __________/ Symbolic Algebra (SymPy)
-   |                                __________/
-   |                     __________/ Integer Arithmetic & Logic
-   |          __________/
-   +---------/------------------------------------------------------------------------> Generations
-```
-
-Each S-curve saturates as the solver exhausts the search space of that specific verifier. Sustained super-exponential progress requires an explicit mechanism to transition to the next step of the staircase:
-- **Verifier Saturation Sensor**: Monitored on the held-out evaluation of domain $D_k$. When accuracy exceeds $92\%$ and the solver regret on newly proposed tasks drops below $\epsilon = 0.05$ across 3 generations, domain $D_k$ is declared saturated.
+Technological progress follows an **S-curve staircase**, analogous to Moore’s Law across lithography nodes [가설]:
+- **Verifier Saturation Sensor**: When held-out accuracy on domain $D_k$ exceeds $92\%$ and solver regret drops below $\epsilon = 0.05$ across 3 generations, domain $D_k$ is declared saturated.
 - **Domain Ascension Protocol**:
-  1. *Compositional Synthesis*: Synthesize hybrid domains combining saturated tools (e.g., Integer Arithmetic $\to$ Symbolic Polynomials via SymPy $\to$ Multi-variable Optimization via Z3).
+  1. *Compositional Synthesis*: Synthesize hybrid domains combining saturated tools (Arithmetic $\to$ Symbolic Polynomials $\to$ Z3 SMT Optimization).
   2. *Autoformalization Mapping*: Direct the core to parse informal textbook corpora into Lean 4 theorem declarations, validating syntax via the Lean compiler.
-  3. *Zero-Parameter Simulator Ingestion*: Ingest new open-source execution environments into the verification harness (e.g., RDKit molecular sanitization, OpenMM physics engine, PlanBench VAL validator [검증됨: https://arxiv.org/html/2305.15771v2]).
+  3. *Zero-Parameter Simulator Ingestion*: Ingest open-source execution environments into the verification harness (RDKit, OpenMM, PlanBench VAL validator [검증됨: https://arxiv.org/html/2305.15771v2]).
 
 ### 2.5 Generation Cycle Time and Compute per Generation on Free Quotas
 Using standard $6ND$ training and $2ND$ inference scaling formulas for an $N = 79.8\text{M}$ parameter model:
 - **Inference Rollout FLOPs**: $2 \times 79.8 \times 10^6 \approx 1.596 \times 10^8 \text{ FLOPs/token}$.
 - **Training FLOPs**: $6 \times 79.8 \times 10^6 \approx 4.788 \times 10^8 \text{ FLOPs/token}$.
-
-#### Budget for One Generation ($g$):
-- **Problem Batch Size**: 25,000 tasks (15,000 procedural, 10,000 proposer self-play).
-- **MCTS Budget**: 64 simulations per problem; average formal trajectory length = 150 tokens.
-- **Total Rollout Tokens**: $25,000 \times 64 \times 150 = 2.40 \times 10^8 \text{ tokens}$.
-- **Rollout FLOPs**: $2.40 \times 10^8 \times 1.596 \times 10^8 \approx 3.83 \times 10^{16} \text{ FLOPs}$.
-- **Rollout Time on Kaggle 2x T4 (130 TFLOPS peak, 25% MFU $\implies 32.5 \text{ TFLOPS}$ sustained)**:
-  $$\text{Time}_{\text{rollout}} = \frac{3.83 \times 10^{16} \text{ FLOPs}}{3.25 \times 10^{13} \text{ FLOP/s}} = 1,178 \text{ seconds} \approx 0.33 \text{ hours (20 minutes)}$$
-- **Verification Overhead**: $1.6 \times 10^6$ Python/SymPy node checks batched across 4 vCPUs ($\approx 1,000 \text{ checks/s}$) takes $\approx 1,600 \text{ seconds} \approx 0.44 \text{ hours (26 minutes)}$ [추정].
-- **Expert Iteration Training**: 20M filtered verified tokens $\times 4.788 \times 10^8 \text{ FLOPs/token} \approx 9.58 \times 10^{15} \text{ FLOPs}$.
-- **Training Time on Kaggle TPU v5e-8 (1,576 TFLOPS peak, 30% MFU $\implies 472.8 \text{ TFLOPS}$ sustained)**:
-  $$\text{Time}_{\text{train}} = \frac{9.58 \times 10^{15} \text{ FLOPs}}{4.728 \times 10^{14} \text{ FLOP/s}} \approx 20.25 \text{ seconds}$$
-  *(On Kaggle 2x T4: $9.58 \times 10^{15} / 3.25 \times 10^{13} \approx 295 \text{ seconds} \approx 0.08 \text{ hours (5 minutes)})$.*
+- **Rollout Budget**: 25,000 tasks $\times 64$ MCTS sims $\times 150$ tokens $= 2.40 \times 10^8$ tokens $\approx 3.83 \times 10^{16}$ FLOPs.
+  - On Kaggle 2x T4 (130 TFLOPS peak, 25% MFU $\implies 32.5$ TFLOPS sustained): $3.83 \times 10^{16} / 3.25 \times 10^{13} \approx 1,178\text{s} \approx 0.33\text{h (20 min)}$.
+- **Verification Overhead**: $1.6 \times 10^6$ Python/SymPy node checks across 4 vCPUs ($\approx 1,000 \text{ checks/s}$) takes $\approx 1,600\text{s} \approx 0.44\text{h (26 min)}$ [추정].
+- **Expert Iteration Training**: 20M verified tokens $\times 4.788 \times 10^8 = 9.58 \times 10^{15}$ FLOPs.
+  - On Kaggle TPU v5e-8 (1,576 TFLOPS peak, 30% MFU $\implies 472.8$ TFLOPS sustained): $9.58 \times 10^{15} / 4.728 \times 10^{14} \approx 20.25\text{s}$ (on T4x2: $\approx 295\text{s} \approx 0.08\text{h}$).
 - **Total Generation Time**: $\approx 0.33\text{h} + 0.44\text{h} + 0.1\text{h} + 0.2\text{h} \approx 1.07 \text{ hours}$.
-- **Quota Fit**: With Kaggle’s 30 GPU-hours/week (T4) and 20 hours/week (TPU v5e-8) [검증됨: https://aimultiple.com/free-cloud-gpu, https://gpuperhour.com/blog/free-cloud-gpus-and-credits], the system can complete **14 full RSI generations per week**, comfortably staying within 100% free compute [추정].
+- **Quota Fit**: With Kaggle’s 30 GPU-hours/week (T4) and 20 hours/week (TPU v5e-8) [검증됨: https://aimultiple.com/free-cloud-gpu, https://gpuperhour.com/blog/free-cloud-gpus-and-credits], the system completes **14 full RSI generations per week**, 100% within free compute [추정].
 
 ---
 
@@ -154,43 +101,26 @@ Using standard $6ND$ training and $2ND$ inference scaling formulas for an $N = 7
 
 | Curve-Killer | Mechanism | Empirical Detector | Rollback & Kill Rule |
 |---|---|---|---|
-| **1. Plateau** | MCTS search explores beyond policy support; regret proposer forces boundary exploration; Stitch DSL compression prevents exponential search depth. | Held-out fresh twin score gain $\Delta_g \le 0$ across 2 consecutive generations; pass@1024 slope $\le 0$ [검증됨: https://arxiv.org/abs/2504.13837v4]. | Inject $\epsilon$-exploration noise ($+50\%$ Dirichlet noise at root); if stagnant for 3 generations, rollback weights to $g-1$ and force ascension to next verifier domain. |
-| **2. Own-Level Prison** | Proposer penalized for unlearnable tasks: $R_{\text{prop}} = \mathbb{I}(\text{solvable}) \cdot (1 - \text{Accuracy})$. Cannot farm trivial tasks or stall on unsolvable ones. | Solver solve-rate on proposed tasks drifts outside the optimal $[35\%, 65\%]$ Goldilocks band; proposer task entropy drops $>25\%$. | Clamp proposer curriculum by injecting $40\%$ guaranteed-frontier problems from frozen procedural generators; reset proposer learning rate. |
-| **3. Reward Hacking (Fake Exponential)** | Verifiers run in a separate, unprivileged, read-only process with zero Python object sharing (no `__eq__` monkey-patching or stack-frame inspection) [검증됨: https://metr.org/evaluations/openai-o3-report/]. | **In-Loop vs. Held-Out Gap**: $H = S_{\text{in-loop}} - S_{\text{held-out}} > 5.0$ points while held-out remains flat; random-reward control arm delta $> 0$ [검증됨: https://proceedings.mlr.press/v306/shao26d.html]. | **Immediate Emergency Kill Switch**. Freeze pipeline, discard generation $g$, quarantine corrupted trajectories, and verify filesystem integrity against cryptographic checksums. |
-| **4. Model Collapse** | Data accumulation: never replace historical data; accumulate verified traces into an immutable archive ($\ge 25\%$ replay buffer reserved for foundational seed data) [검증됨: https://arxiv.org/abs/2404.01413v2]. | Output token entropy drops $>20\%$; semantic AST diversity falls below threshold; collapse in distinct program ratio across solutions. | Restore replay buffer historical mix to $50\%$; rollback policy head to generation $g-1$; re-sample search with increased temperature $T=1.2$. |
-| **5. Compute Wall** | Snell compute-optimal test-time compute allocation [검증됨: https://arxiv.org/abs/2408.03314]: dynamic MCTS simulation allocation based on root node value entropy (easy = 8 sims, hard = 256 sims). | Mean inference latency exceeds 60 T4-seconds per benchmark item; tree node expansion timeout rate $>10\%$. | Prune low-probability search branches ($P(a|s) < 0.02$); enforce hard search-depth cap $D_{\max}=20$; fallback to beam search if tree explodes. |
+| **1. Plateau** | MCTS search explores beyond policy support; regret proposer forces boundary exploration; Stitch DSL compression prevents exponential search depth. | Fresh twin score gain $\Delta_g \le 0$ across 2 consecutive generations; pass@1024 slope $\le 0$ [검증됨: https://arxiv.org/abs/2504.13837v4]. | Inject $\epsilon$-exploration noise ($+50\%$ Dirichlet noise at root); if stagnant for 3 generations, rollback weights to $g-1$ and ascend domain. |
+| **2. Own-Level Prison** | Proposer penalized for unlearnable tasks: $R_{\text{prop}} = \mathbb{I}(\text{solvable}) \cdot (1 - \text{Accuracy})$. Cannot farm trivial tasks or stall on unsolvable ones. | Solver solve-rate on proposed tasks drifts outside optimal $[35\%, 65\%]$ band; proposer task entropy drops $>25\%$. | Clamp proposer curriculum by injecting $40\%$ guaranteed-frontier problems from frozen procedural generators; reset proposer learning rate. |
+| **3. Reward Hacking (Fake Exponential)** | Verifiers run in separate, unprivileged, read-only process with zero Python object sharing (no `__eq__` monkey-patching or stack-frame inspection) [검증됨: https://metr.org/evaluations/openai-o3-report/]. | **In-Loop vs. Held-Out Gap**: $H = S_{\text{in-loop}} - S_{\text{held-out}} > 5.0$ points while held-out remains flat; random-reward control arm delta $> 0$ [검증됨: https://proceedings.mlr.press/v306/shao26d.html]. | **Immediate Emergency Kill Switch**. Freeze pipeline, discard generation $g$, quarantine corrupted trajectories, and assert verifier checksums. |
+| **4. Model Collapse** | Data accumulation: never replace historical data; accumulate verified traces into immutable archive ($\ge 25\%$ replay buffer reserved for seed data) [검증됨: https://arxiv.org/abs/2404.01413v2]. | Output token entropy drops $>20\%$; semantic AST diversity falls below threshold; distinct program ratio collapses. | Restore replay buffer historical mix to $50\%$; rollback policy head to generation $g-1$; re-sample search with temperature $T=1.2$. |
+| **5. Compute Wall** | Snell compute-optimal test-time compute allocation [검증됨: https://arxiv.org/abs/2408.03314]: dynamic MCTS simulation allocation based on root node value entropy (8 to 256 sims). | Mean inference latency exceeds 60 T4-seconds per benchmark item; tree node expansion timeout rate $>10\%$. | Prune low-probability search branches ($P(a|s) < 0.02$); enforce hard search-depth cap $D_{\max}=20$; fallback to beam search if tree explodes. |
 | **6. Real-Experiment / Simulator Latency** | Pre-screening surrogate value network trained on historical simulations; candidate selection via Expected Information Gain (EIG) active learning. | Simulator queue latency $>48$ hours; batch simulation compute exceeds allocated weekly quota. | Throttle physical/numerical simulation requests; substitute coarse-grained fast proxy models (e.g., molecular mechanics before DFT). |
 
 ---
 
 ## 4. RSI Metrics Dashboard
 
-All dashboard metrics are computed in an isolated, read-only evaluation container against commit-revealed frozen benchmarks:
-
-1. **Teacher-Exceedance ($\text{TE}_g$)**:
-   $$\text{TE}_g = \frac{\sum_{x \in \mathcal{D}_{\text{held-out}}} \mathbb{I}\left(\text{Pass}_{\text{core}}(x) = 1 \land \text{Pass}_{\text{teacher}}(x) = 0\right)}{\sum_{x \in \mathcal{D}_{\text{held-out}}} \mathbb{I}\left(\text{Pass}_{\text{teacher}}(x) = 0\right)}$$
-   *Target*: $\text{TE} \ge 25\%$ at cord-cut; $\ge 60\%$ at GPT-4 rung.
-2. **Improvement per Generation ($\Delta_g$)**:
-   $$\Delta_g = S_g(\mathcal{D}_{\text{held-out}}) - S_{g-1}(\mathcal{D}_{\text{held-out}})$$
-   Normalized efficiency metric: $\Delta_g / \text{GPU-Hour}$. *Requirement*: $\Delta_g > 0$ for $\ge 3$ consecutive generations without human intervention.
-3. **Second Derivative / Acceleration ($a_g$)**:
-   $$a_g = \Delta_g - \Delta_{g-1}$$
-   *Requirement*: $a_g \ge 0$ during S-curve phase transitions, confirming compounding returns.
-4. **In-Loop vs. Held-Out Gap ($H_g$)**:
-   $$H_g = S_g(\mathcal{D}_{\text{proposer\_train}}) - S_g(\mathcal{D}_{\text{fresh\_twin}})$$
-   *Threshold*: $H_g \le 5.0$. Any breach triggers the anti-hacking circuit breaker.
-5. **Generations Without Human/Teacher Data ($G_0$)**:
-   Monotonically incrementing integer counter tracking autonomous iterations since Stage 1 booster separation.
-6. **Efficiency Gain per Generation ($E_g$)**:
-   Ratio of MCTS rollouts required to achieve an $80\%$ solve-rate on standard benchmark problems:
-   $$E_g = \frac{\text{Rollouts}_{g-1}(80\%)}{\text{Rollouts}_g(80\%)}$$
-   A value $E_g > 1.0$ indicates the policy network has internalized search efficiency.
-7. **Large-$k$ Pass@$k$ Ratio ($k=1024$)**:
-   Measures solution space coverage [검증됨: https://arxiv.org/abs/2504.13837v4], detecting whether policy refinement expands capability boundaries or merely narrows support.
-8. **Program Library Compression Ratio ($C_{\text{lib}}$)**:
-   Mean AST node count of verified solutions on held-out tasks:
-   $$C_{\text{lib}}(g) = \frac{\overline{\text{AST\_Length}}_g}{\overline{\text{AST\_Length}}_0}$$
-   Decreases over time as L3 macro-primitives are composed.
+All metrics are computed in an isolated, read-only container against commit-revealed frozen benchmarks:
+1. **Teacher-Exceedance ($\text{TE}_g$)**: Fraction of held-out problems failed by teacher ($k=8$ samples) that the core solves: $\text{TE} \ge 25\%$ at cord-cut; $\ge 60\%$ at GPT-4 rung.
+2. **Improvement per Generation ($\Delta_g$)**: $\Delta_g = S_g(\mathcal{D}_{\text{held-out}}) - S_{g-1}(\mathcal{D}_{\text{held-out}})$. Normalized efficiency: $\Delta_g / \text{GPU-Hour}$. Requirement: $\Delta_g > 0$ for $\ge 3$ consecutive generations.
+3. **Second Derivative / Acceleration ($a_g$)**: $a_g = \Delta_g - \Delta_{g-1} \ge 0$ during S-curve phase transitions.
+4. **In-Loop vs. Held-Out Gap ($H_g$)**: $H_g = S_g(\mathcal{D}_{\text{proposer\_train}}) - S_g(\mathcal{D}_{\text{fresh\_twin}}) \le 5.0$.
+5. **Generations Without Human/Teacher Data ($G_0$)**: Monotonically incrementing integer counter since Stage 1 cord cutting ($G_0 \ge 3$ confirms autonomous compounding).
+6. **Efficiency Gain per Generation ($E_g$)**: Ratio of MCTS rollouts required to achieve an $80\%$ solve-rate on standard benchmark problems: $E_g = \text{Rollouts}_{g-1}(80\%) / \text{Rollouts}_g(80\%) > 1.0$.
+7. **Large-$k$ Pass@$k$ Ratio ($k=1024$)**: Solution space coverage [검증됨: https://arxiv.org/abs/2504.13837v4], detecting whether policy refinement expands capability boundaries or merely narrows support.
+8. **Program Library Compression Ratio ($C_{\text{lib}}$)**: Mean AST node count of verified solutions on held-out tasks: $C_{\text{lib}}(g) = \overline{\text{AST\_Length}}_g / \overline{\text{AST\_Length}}_0$, decreasing over time.
 
 ---
 
@@ -235,10 +165,7 @@ The reasoning core is an attention-free **Gated DeltaNet** [검증됨: https://a
                +-------------------------------+       (Python, SymPy, Z3, Lean)
                                |
                                v
-                     [Structured JSON Output]
-                               |
-                               v
-               [Renderer Firewall (Isolated LLM)]
+                     [Structured JSON Output] ===> [Renderer Firewall (Isolated LLM)]
 ```
 
 ### 5.2 Formal Structured Output Schema
@@ -262,22 +189,12 @@ The core never outputs English. It outputs a strictly validated JSON structure s
     },
     "execution_trace": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "step_idx": { "type": "integer" },
-          "opcode": { "type": "string" },
-          "stdout": { "type": "string" }
-        }
-      }
+      "items": { "type": "object", "properties": { "step_idx": { "type": "integer" }, "opcode": { "type": "string" }, "stdout": { "type": "string" } } }
     },
     "answer": {
       "type": "object",
       "required": ["type", "value"],
-      "properties": {
-        "type": { "type": "string", "enum": ["integer", "float", "latex", "choice_letter", "pointer_span", "grid"] },
-        "value": { "type": ["string", "number", "array"] }
-      }
+      "properties": { "type": { "type": "string", "enum": ["integer", "float", "latex", "choice_letter", "pointer_span", "grid"] }, "value": { "type": ["string", "number", "array"] } }
     },
     "verifier_status": { "type": "string", "enum": ["verified_success", "execution_error", "timeout"] },
     "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
@@ -304,11 +221,8 @@ The parameter budget counts **every single learned weight executed at inference*
 *Verification*: $79,817,985 < 100,000,000$. The model operates comfortably under the 100M parameter ceiling with 20.18M parameters to spare.
 
 ### 5.4 Non-Transformer Justification
-1. **Absence of Sequence Softmax**: Softmax attention computes an $N \times N$ attention matrix $A = \text{softmax}(QK^T / \sqrt{d})$, incurring $\mathcal{O}(N^2)$ memory and compute scaling. Gated DeltaNet replaces this with a linear state-space delta-rule recurrence:
-   $$S_t = S_{t-1} \odot (1 - \beta_t k_t^T) + v_t k_t^T$$
-   $$y_t = S_t q_t$$
-   which maintains a fixed-size state matrix $S_t \in \mathbb{R}^{d \times d}$ [검증됨: https://arxiv.org/abs/2412.06464v3].
-2. **MCTS Throughput & KV-Cache Elimination**: Standard Transformers require storing an ever-expanding KV-cache for every node in the MCTS tree. In a search tree with 64 simulations of 150 tokens, the KV-cache creates severe memory fragmentation and bandwidth saturation. Gated DeltaNet stores a compact, constant-size hidden state $S_t$ per tree node, accelerating MCTS node expansion by **8x to 10x on NVIDIA T4 GPUs** [추정].
+1. **Absence of Sequence Softmax**: Softmax attention computes an $N \times N$ attention matrix $A = \text{softmax}(QK^T / \sqrt{d})$, incurring $\mathcal{O}(N^2)$ memory and compute scaling. Gated DeltaNet replaces this with a linear state-space delta-rule recurrence: $S_t = S_{t-1} \odot (1 - \beta_t k_t^T) + v_t k_t^T, y_t = S_t q_t$, maintaining a fixed-size state matrix $S_t \in \mathbb{R}^{d \times d}$ [검증됨: https://arxiv.org/abs/2412.06464v3].
+2. **MCTS Throughput & KV-Cache Elimination**: Standard Transformers require storing an ever-expanding KV-cache for every node in the MCTS tree, causing severe memory fragmentation. Gated DeltaNet stores a compact, constant-size hidden state $S_t$ per tree node, accelerating MCTS node expansion by **8x to 10x on NVIDIA T4 GPUs** [추정].
 3. **Hardware-Efficient Linear Scans**: Training utilizes chunked associative scans compatible with Triton 3.2 on Turing GPUs and `jax.lax.associative_scan` on TPU v5e, achieving 30% MFU without custom attention kernels [검증됨: https://docs.jaxstack.ai/en/latest/JAX_for_LLM_pretraining.html].
 
 ---
@@ -317,14 +231,10 @@ The parameter budget counts **every single learned weight executed at inference*
 
 ### 6.1 Renderer Firewall
 The renderer (the "translator") is strictly decoupled from the reasoning engine:
-1. **The Blindfold Protocol**: The renderer process is physically isolated. It receives **only** the `AphasicCoreStructuredOutput` JSON payload emitted by the core. It is **never provided with the original problem prompt**. A static 8-gram cross-check asserts zero token overlap between the renderer's input context and the raw benchmark question (excluding explicit string spans extracted by the core's pointer mechanism) [추정].
-2. **Core-Only Scoring**: All benchmark evaluations are scored directly against formal fields of the JSON object (`answer.value`, `formal_ir.code_ast`). The renderer is completely absent from the scoring loop; test benchmarks evaluate the machine output, not human prose.
-3. **Renderer-Alone Controls**: For every evaluated benchmark row, we publish the renderer's performance under three control regimes:
-   - Control (a): Renderer given raw problem prompt directly (demonstrating baseline competence).
-   - Control (b): Renderer given an empty or randomly shuffled core trace.
-   - Control (c): Renderer given the core trace with the `answer` field masked.
-   *Pass Condition*: Scores under Controls (b) and (c) must be $\le \text{random chance} + 2\sigma$.
-4. **Counterfactual Swap Test**: In 500 test problems, inject an intentional error into the core's answer field (e.g., replace `42` with `41`, or `A` with `C`). The renderer must verbalize the corrupted answer $\ge 99\%$ of the time [가설]. If the renderer "corrects" the error to gold ground truth, it is performing independent reasoning and the run is disqualified.
+1. **The Blindfold Protocol**: The renderer receives **only** the `AphasicCoreStructuredOutput` JSON payload emitted by the core. It is **never provided with the original problem prompt**. A static 8-gram cross-check asserts zero token overlap between renderer input context and the raw benchmark question (excluding explicit string spans extracted by core pointer copy) [추정].
+2. **Core-Only Scoring**: All benchmark evaluations are scored directly against formal fields of the JSON object (`answer.value`, `formal_ir.code_ast`). The renderer is completely absent from the scoring loop.
+3. **Renderer-Alone Controls**: For every evaluated benchmark row, we publish renderer performance under three control regimes: (a) raw problem prompt directly, (b) empty or randomly shuffled core trace, (c) core trace with answer masked. Pass condition: Scores under Controls (b) and (c) must be $\le \text{random chance} + 2\sigma$.
+4. **Counterfactual Swap Test**: In 500 test problems, inject an intentional error into the core's answer field. The renderer must verbalize the corrupted answer $\ge 99\%$ of the time [가설]. If the renderer "corrects" the error to gold ground truth, it is performing independent reasoning and the run is disqualified.
 5. **Direct Core Input Reading**: The core's 4-layer Bidirectional Input Reader ingests raw natural language text directly. No intermediary LLM pre-parser, auto-formalizer, or prompt rewriter is permitted.
 
 ### 6.2 RSI Integrity
@@ -337,9 +247,7 @@ The renderer (the "translator") is strictly decoupled from the reasoning engine:
 ## 7. The Boss Ladder
 
 ### 7.1 Scoreboard vs. GPT-3.5 and the "아득히" Margin
-The mid-boss is the maximum reported GPT-3.5 score $T$. To surpass GPT-3.5 "아득히" (by a wide margin), the model must hit or exceed the benchmark threshold $G$:
-$$G = T + \max\left(10, \frac{100 - T}{3}\right)$$
-All scores are evaluated NLG-free directly from the core's formal outputs.
+The mid-boss is the maximum reported GPT-3.5 score $T$. To surpass GPT-3.5 "아득히" (by a wide margin), the model must hit or exceed the benchmark threshold $G = T + \max\left(10, \frac{100 - T}{3}\right)$. All scores are evaluated NLG-free directly from the core's formal outputs.
 
 | # | Benchmark Row | GPT-3.5 Max ($T$) | Target Margin ($G$) | Expected Gen ($g$) | Target Score | Margin ($\Delta$) | 95% CI Lower Bound |
 |---|---|---|---|---|---|---|---|
@@ -368,26 +276,10 @@ All scores are evaluated NLG-free directly from the core's formal outputs.
 
 ### 7.2 The Subsequent Ladder Rungs
 Surpassing GPT-3.5 is merely conquering the "first slime outside the starting village" [추정]. The true RSI trajectory extends across successive rungs:
-
-```
-RSI Ladder Progression:
-[Rung 1: Slime GPT-3.5]  -->  [Rung 2: GPT-4 Level]  -->  [Rung 3: o1/R1 Level]  -->  [Rung 4: Frontier Tin Cans]  -->  [Rung 5: North Star ASI]
-   (Gen 8: Math/Code)            (Gen 20: Lean/Proofs)        (Gen 40: Olympiad)           (Gen 60: Super-Human)            (Simulators/Bio/Drug)
-   Pr(Reach) = 90%               Pr(Reach) = 65%              Pr(Reach) = 40%              Pr(Reach) = 25%                  Pr(Reach) = 10%
-```
-
-1. **Rung 2: GPT-4 Level Reasoning (Expected Gen 15–20, Probability: 65%)**:
-   - *Targets*: MATH $>85\%$, HumanEval $>85\%$, AIME 2024 $>30\%$.
-   - *Prerequisites*: Full integration of Lean 4 tactical search for formal mathematics; multi-turn execution self-repair loops for code.
-2. **Rung 3: o1 / DeepSeek-R1 Level Reasoning (Expected Gen 30–40, Probability: 40%)**:
-   - *Targets*: AIME 2024 $>75\%$, Codeforces Rating $\ge 1800$.
-   - *Prerequisites*: MCTS scaling with Snell compute-optimal test-time compute ($k \ge 512$); massive procedural generation of formal competition mathematics.
-3. **Rung 4: Frontier "Tin Can" Parity (Expected Gen 50–60, Probability: 25%)**:
-   - *Targets*: Outperforming Claude 3.7 Sonnet (Thinking) and Gemini 2.5 Pro across all mechanical and formal reasoning benchmarks.
-   - *Prerequisites*: L4 meta-procedure optimization; automated generation of novel mathematical lemma databases.
-4. **Rung 5: North Star / Superhuman ASI (Probability: 10%)**:
-   - *Targets*: Generating valid proofs for open conjectures in math; discovering novel, synthesizable, high-affinity small-molecule binders for oncology targets via simulator verifiers.
-   - *Prerequisites*: Real-world simulator integration (OpenMM, PySCF); external grant acquisition for scaled training.
+1. **Rung 2: GPT-4 Level Reasoning (Expected Gen 15–20, Probability: 65%)**: MATH $>85\%$, HumanEval $>85\%$, AIME 2024 $>30\%$. Requires Lean 4 tactical search and multi-turn execution self-repair loops.
+2. **Rung 3: o1 / DeepSeek-R1 Level Reasoning (Expected Gen 30–40, Probability: 40%)**: AIME 2024 $>75\%$, Codeforces Rating $\ge 1800$. Requires Snell compute-optimal MCTS test-time scaling ($k \ge 512$) and massive synthetic math generation.
+3. **Rung 4: Frontier "Tin Can" Parity (Expected Gen 50–60, Probability: 25%)**: Outperforming Claude 3.7 Sonnet (Thinking) and Gemini 2.5 Pro across all formal reasoning benchmarks via L4 meta-procedure optimization.
+4. **Rung 5: North Star / Superhuman ASI (Probability: 10%)**: Generating valid proofs for open conjectures in math; discovering novel, synthesizable, high-affinity small-molecule binders for oncology targets via simulator verifiers.
 
 ---
 
@@ -408,23 +300,16 @@ RSI Ladder Progression:
 - **Training FLOPs per Token**: $6N \approx 4.788 \times 10^8 \text{ FLOPs/token}$.
 - **Stage 0 Bootloader Pretraining**:
   $$\text{Total FLOPs} = 6 \times (7.98 \times 10^7) \times (5.0 \times 10^9 \text{ tokens}) \approx 2.39 \times 10^{18} \text{ FLOPs}$$
-- **Execution on Kaggle TPU v5e-8**:
-  - Peak: 1,576 TFLOPS; sustained at 30% MFU: $472.8 \text{ TFLOPS} = 4.728 \times 10^{14} \text{ FLOP/s}$ [검증됨: https://docs.cloud.google.com/tpu/docs/v5e].
-  - Time Required:
-    $$\text{Time} = \frac{2.39 \times 10^{18} \text{ FLOPs}}{4.728 \times 10^{14} \text{ FLOP/s}} \approx 5,055 \text{ seconds} \approx 1.40 \text{ hours}$$
-  - *Result*: The entire Stage 0 bootloader pretraining consumes merely **1.4 hours** of the 20 hours/week TPU quota [추정]!
+- **Execution on Kaggle TPU v5e-8**: Peak: 1,576 TFLOPS; sustained at 30% MFU: $472.8 \text{ TFLOPS} = 4.728 \times 10^{14} \text{ FLOP/s}$ [검증됨: https://docs.cloud.google.com/tpu/docs/v5e].
+  $$\text{Time} = \frac{2.39 \times 10^{18} \text{ FLOPs}}{4.728 \times 10^{14} \text{ FLOP/s}} \approx 5,055 \text{ seconds} \approx 1.40 \text{ hours}$$
+  The entire Stage 0 bootloader pretraining consumes merely **1.4 hours** of the 20 hours/week TPU quota [추정]!
 
 ### 8.3 Hardware Engineering Notes
-- **NVIDIA T4 (16 GB, Turing sm_75)**:
-  - *Constraint*: T4 does not support bfloat16; fp16 tensor cores only [검증됨: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/tesla-t4/t4-tensor-core-datasheet-951643.pdf].
-  - *Mitigation*: Run mixed-precision training with PyTorch Automatic Mixed Precision (`torch.cuda.amp`) using dynamic loss scaling. State accumulators in Gated DeltaNet linear scans must be kept in fp32 to prevent exponential gate underflow/overflow [검증됨: archs.md].
-  - *Toolchain*: Triton $\ge 3.3$ dropped Turing support [검증됨: https://raw.githubusercontent.com/triton-lang/triton/v3.3.0/README.md]. Pin PyTorch environment to Triton 3.2.0, or use pure-PyTorch CUDA chunked scan fallbacks.
-- **TPU v5e-8 (JAX/XLA)**:
-  - *Constraint*: XLA compilation requires strictly static tensor shapes; dynamic shapes cause recompilation loops.
-  - *Mitigation*: Pad all problem sequences to static powers of two ($L \in \{256, 512, 1024\}$). Implement linear recurrence via `jax.lax.associative_scan`.
+- **NVIDIA T4 (16 GB, Turing sm_75)**: T4 does not support bfloat16; fp16 tensor cores only [검증됨: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/tesla-t4/t4-tensor-core-datasheet-951643.pdf]. Run mixed-precision training with PyTorch Automatic Mixed Precision (`torch.cuda.amp`) using dynamic loss scaling. State accumulators in Gated DeltaNet linear scans must be kept in fp32 to prevent exponential gate underflow/overflow [검증됨: archs.md]. Pin PyTorch environment to Triton 3.2.0 [검증됨: https://raw.githubusercontent.com/triton-lang/triton/v3.3.0/README.md], or use pure-PyTorch CUDA chunked scan fallbacks.
+- **TPU v5e-8 (JAX/XLA)**: XLA compilation requires strictly static tensor shapes. Pad all problem sequences to static powers of two ($L \in \{256, 512, 1024\}$). Implement linear recurrence via `jax.lax.associative_scan`.
 - **Inference Cost per Query**:
-  - *Greedy Pass (Single Rollout, 150 tokens)*: $150 \times 1.596 \times 10^8 \approx 2.39 \times 10^{10} \text{ FLOPs} \approx 0.0007 \text{ seconds on T4}$.
-  - *Snell Adaptive MCTS Search (Average 64 simulations)*: $64 \times 2.39 \times 10^{10} \approx 1.53 \times 10^{12} \text{ FLOPs} \approx 0.047 \text{ seconds on T4}$. Well within the 60.0-second per-problem fair-play ceiling [추정].
+  - *Greedy Pass (150 tokens)*: $150 \times 1.596 \times 10^8 \approx 2.39 \times 10^{10} \text{ FLOPs} \approx 0.0007 \text{ seconds on T4}$.
+  - *Snell Adaptive MCTS Search (64 simulations)*: $64 \times 2.39 \times 10^{10} \approx 1.53 \times 10^{12} \text{ FLOPs} \approx 0.047 \text{ seconds on T4}$. Well within the 60.0-second fair-play ceiling [추정].
 
 ---
 
@@ -440,7 +325,6 @@ The renderer is governed by a strict immutable system prompt:
 ```
 You are the Official Interpreter ("통역사") for an Aphasic Genius reasoning core.
 Your sole job is to translate the core's formal execution trace and answer into clear, natural language.
-
 RULES:
 1. You are given ONLY the formal JSON trace emitted by the core. You are NOT given the original question.
 2. You must NEVER attempt to solve, re-compute, or alter any calculation or conclusion.
@@ -451,7 +335,7 @@ RULES:
 
 ### 9.3 Faithfulness Verification Protocol
 - **Automated Consistency Scoring**: Offline sample batches are audited via AlignScore [검증됨: https://arxiv.org/abs/2305.16739] and PARENT table-to-text metrics [검증됨: https://aclweb.org/anthology/2022.findings-acl.223.pdf] to verify that zero unsupported claims are hallucinated.
-- **The Double-Blind Swap Test**: In 500 test trials, core answers are permuted. If renderer output matches the permuted core answer in $<99\%$ of trials, deployment is immediately halted and output falls back to Tier 0 verbatim templating [가설].
+- **Double-Blind Swap Test**: In 500 test trials, core answers are permuted. If renderer output matches the permuted core answer in $<99\%$ of trials, deployment is immediately halted and output falls back to Tier 0 verbatim templating [가설].
 
 ---
 
@@ -493,9 +377,7 @@ Safety mechanisms scale strictly with capability ("faster cars require better br
 - **Immutable Verifiers and Datastores**: Verifiers, ground-truth reward functions, and test evaluation datasets reside on read-only filesystems. Checksum integrity (SHA-256) is asserted at the start of every generation.
 - **Process & Network Isolation**: Training and rollout environments run inside a secure container with network access completely disabled (`--network none`). No external API calls are physically possible.
 - **Tamper-Proof Audit Logging**: Every generation automatically writes an immutable cryptographic ledger containing: random seeds, code commit hashes, verifier hashes, training loss logs, and exact MCTS trace samples.
-- **Automatic Circuit Breakers**:
-  - If In-loop vs. Held-out gap exceeds $5.0$ points ($H_g > 5.0$), execution halts immediately.
-  - Any unauthorized syscall, file access attempt, or memory fault terminates the process with an alert.
+- **Automatic Circuit Breakers**: If In-loop vs. Held-out gap exceeds $5.0$ points ($H_g > 5.0$), or any unauthorized syscall occurs, execution terminates instantly.
 
 ### 11.2 Level 4 (L4) and Above Safeguards
 - **Mandatory Human-in-the-Loop Sign-off**: Any proposed change to the training pipeline, MCTS algorithm, loss functions, learning rate schedules, or data generators synthesized by the meta-optimizer must be presented as a human-readable Git diff and explicitly approved by the human operator before being merged into generation $g+1$.
@@ -527,8 +409,7 @@ Demonstrates 1 complete self-improvement generation (g0 -> g1)
 using genuine symbolic template distillation with zero external data.
 """
 
-import re
-import random
+import re, random
 from typing import List, Tuple, Optional
 
 class GameOf24Verifier:
@@ -536,21 +417,18 @@ class GameOf24Verifier:
     @staticmethod
     def verify(numbers: List[int], expression: str) -> bool:
         try:
-            allowed = set("0123456789+-*/() ")
-            if not all(c in allowed for c in expression):
+            if not all(c in set("0123456789+-*/() ") for c in expression):
                 return False
-            used_nums = [int(n) for n in re.findall(r"\b\d+\b", expression)]
-            if sorted(used_nums) != sorted(numbers):
+            used = [int(n) for n in re.findall(r"\b\d+\b", expression)]
+            if sorted(used) != sorted(numbers):
                 return False
-            result = eval(expression, {"__builtins__": None}, {})
-            return abs(result - 24.0) < 1e-6
+            return abs(eval(expression, {"__builtins__": None}, {}) - 24.0) < 1e-6
         except Exception:
             return False
 
 class ExpertIterationPolicy:
     """A genuine symbolic policy that learns expression grammar templates."""
     def __init__(self):
-        # Initial g0 prior: knows only basic linear patterns
         self.learned_templates = [
             lambda a, b, c, d: f"{a} + {b} + {c} + {d}",
             lambda a, b, c, d: f"({a} + {b}) * ({c} - {d})",
@@ -566,7 +444,6 @@ class ExpertIterationPolicy:
         return self.learned_templates[0](a, b, c, d)
 
     def search(self, numbers: List[int], num_sims: int = 48) -> Tuple[Optional[str], Optional[object], Optional[List[str]]]:
-        """MCTS / random-walk tree search exploring permutations and parenthesizations."""
         n = list(numbers)
         forms = [
             lambda n, o: f"(({n[0]} {o[0]} {n[1]}) {o[1]} {n[2]}) {o[2]} {n[3]}",
@@ -584,42 +461,23 @@ class ExpertIterationPolicy:
         return None, None, None
 
     def distill(self, verified_trajectories: List[Tuple[object, List[str]]]):
-        """Expert iteration: distill successful templates into policy library."""
         for form, ops in verified_trajectories:
-            new_tmpl = (lambda f, o: lambda a, b, c, d: f([a, b, c, d], o))(form, ops)
-            self.learned_templates.append(new_tmpl)
+            self.learned_templates.append((lambda f, o: lambda a, b, c, d: f([a, b, c, d], o))(form, ops))
 
 def run_experiment_1():
-    print("=== STARTING EXPERIMENT 1: ONE MEASURED RSI GENERATION ===")
     random.seed(42)
     eval_set = [[random.randint(1, 9) for _ in range(4)] for _ in range(100)]
     train_tasks = [[random.randint(1, 9) for _ in range(4)] for _ in range(200)]
-
-    # 1. Evaluate Generation 0 Base Policy
     agent = ExpertIterationPolicy()
     g0_solves = sum(1 for nums in eval_set if GameOf24Verifier.verify(nums, agent.predict(nums)))
-    print(f"[Generation 0] Base Policy Score (Zero Search): {g0_solves}%")
-
-    # 2. Run MCTS Search over Exact Verifier on Training Tasks
-    verified_data = []
-    for nums in train_tasks:
-        sol, form, ops = agent.search(nums, num_sims=48)
-        if sol:
-            verified_data.append((form, ops))
-    print(f"MCTS Search Amplification Solved: {len(verified_data)}/{len(train_tasks)} "
-          f"({len(verified_data)/len(train_tasks)*100:.1f}%)")
-
-    # 3. Distill Verified Trajectories into Generation 1 Policy (Expert Iteration)
-    agent.distill(verified_data[:15])
-
-    # 4. Evaluate Generation 1 Distilled Policy on Held-out Set (Zero Search)
+    print(f"[Gen 0] Base Policy Score: {g0_solves}%")
+    verified = [sol for nums in train_tasks for sol in [agent.search(nums, 48)] if sol[0]]
+    print(f"MCTS Search Solved: {len(verified)}/{len(train_tasks)}")
+    agent.distill([(f, o) for _, f, o in verified[:15]])
     g1_solves = sum(1 for nums in eval_set if GameOf24Verifier.verify(nums, agent.predict(nums)))
-    delta_g1 = g1_solves - g0_solves
-    print(f"[Generation 1] Distilled Policy Score (Zero Search): {g1_solves}%")
-    print(f"Measurable RSI Gain: Delta_g1 = +{delta_g1}% points")
-
-    assert delta_g1 > 0, "RSI Failed: Policy did not improve after expert iteration!"
-    print("=== EXPERIMENT 1 SUCCESS: Measurable Self-Improvement Confirmed ===")
+    delta = g1_solves - g0_solves
+    print(f"[Gen 1] Distilled Policy Score: {g1_solves}% (Delta = +{delta}% points)")
+    assert delta > 0, "RSI Failed!"
 
 if __name__ == "__main__":
     run_experiment_1()

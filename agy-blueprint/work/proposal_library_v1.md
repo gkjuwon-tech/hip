@@ -3,7 +3,7 @@
 **Philosophy**: Library-Growing Recursive Self-Improvement (Neuro-Symbolic Compilation over 0-Parameter Executors)  
 **Codename**: ARCHIMEDES-LIBRARY (`ALEMBIC-LIB`)  
 **Lead Designer**: Lead Designer for the 'library' philosophy (`worker_proposal_library`)  
-**Target Architecture**: < 100M Parameter Recurrent Non-Transformer Core (Gated DeltaNet / Bi-SSM) + Growing External Skill Library + 0-Parameter Exact Verifiers  
+**Target Architecture**: < 100M Recurrent Non-Transformer Core (Gated DeltaNet / Bi-SSM) + Growing External Skill Library + 0-Parameter Verifiers  
 **Target Hardware Envelope**: 0 KRW (Kaggle Free Tier: 2x NVIDIA T4 16GB, TPU v5e-8; Laptop RTX 3060 6GB; HF Hub Free Tier)  
 **Document Status**: Phase A Proposal v1.0 (Full 12-Section Specification)  
 
@@ -12,36 +12,34 @@
 ## 1. Thesis
 
 ### 1.1 Why Teacher Distillation Caps at the Teacher
-Distilling reasoning traces from frontier autoregressive teachers (Claude Opus 5.5, Gemini 4 Argon, GPT-6 Astra) inherently caps the student at the teacher's capability distribution [검증됨: https://arxiv.org/abs/2504.13837v4]. While teacher distillation provides a convenient initialization for token distribution matching, it fundamentally transfers the teacher's latent biases, systematic reasoning blind spots, and hallucination profiles. Empirical evaluations demonstrate that post-training techniques like pure Reinforcement Learning from Verifiable Rewards (RLVR) or GRPO on an existing model prior merely sharpen what the base model already knows: at large rollouts ($k \ge 256$), base models frequently exhibit higher $pass@k$ coverage than their RL-sharpened descendants, confirming that reward-driven sharpening narrows the reasoning boundary rather than discovering genuinely novel solution spaces [검증됨: https://arxiv.org/abs/2504.13837v4]. Even frontier models are computational "tin cans" (깡통) when measured against autonomous scientific and mathematical discovery. Any architecture treating teacher outputs as its ceiling cannot achieve recursive self-improvement (RSI). Stage 1 rocket booster distillation must be discarded the moment the learner can generate verified self-play data [가설].
+Distilling reasoning traces from frontier autoregressive teachers (Claude Opus 5.5, Gemini 4 Argon, GPT-6 Astra) inherently caps the student at the teacher's capability distribution [검증됨: https://arxiv.org/abs/2504.13837v4]. Distillation transfers the teacher's latent biases, systematic reasoning blind spots, and hallucination profiles. Empirical evaluations demonstrate that post-training techniques like pure Reinforcement Learning from Verifiable Rewards (RLVR) on an existing model prior merely sharpen what the base model already knows: at large rollouts ($k \ge 256$), base models frequently exhibit higher $pass@k$ coverage than their RL-sharpened descendants, confirming that reward-driven sharpening narrows the reasoning boundary rather than discovering genuinely novel solution spaces [검증됨: https://arxiv.org/abs/2504.13837v4]. Even frontier models are computational "tin cans" (깡통) when measured against autonomous scientific and mathematical discovery. Any architecture treating teacher outputs as its ceiling cannot achieve recursive self-improvement (RSI). Stage 1 rocket booster distillation must be discarded the moment the learner can generate verified self-play data [가설].
 
 ### 1.2 What Replaces the Teacher: 0-Parameter Exact Verifiers and Symbolic Search
-The replacement for a human or neural teacher is an exact, deterministic, 0-parameter mechanical verifier operating within a formal execution environment [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. In game-theoretic domains, AlphaGo Zero proved that an agent trained entirely via tree search and self-play against the unyielding rules of Go demolished human-data AlphaGo Lee 100–0 on 4 TPUs within 3 days [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. In formal mathematics and algorithm synthesis, AlphaProof and AlphaGeometry demonstrated that machines can attain International Mathematical Olympiad (IMO) medal-level performance (IMO 2024 Silver: 28/42) without relying on human step-by-step demonstrations, solely by searching over verified Lean kernels and symbolic geometry deductors [검증됨: https://research.google/pubs/olympiad-level-formal-mathematical-reasoning-with-reinforcement-learning/]. Similarly, TinyGSM proved that an external verifier plays a vastly more decisive role in problem-solving accuracy than raw generator parameter scale: a 125M generator paired with a 1.3B verifier jumped from 63.1% to 76.1%, while a 1.3B+1.3B pair reached 81.5%, surpassing its GPT-3.5 teacher at 77.4% [검증됨: https://arxiv.org/html/2312.09241].
+The replacement for a teacher is an exact, deterministic, 0-parameter mechanical verifier operating within a formal execution environment [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. In game-theoretic domains, AlphaGo Zero proved that an agent trained entirely via tree search and self-play against the unyielding rules of Go demolished human-data AlphaGo Lee 100–0 on 4 TPUs within 3 days [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. In formal mathematics, AlphaProof and AlphaGeometry demonstrated that machines can attain International Mathematical Olympiad (IMO) medal-level performance (IMO 2024 Silver: 28/42) without human demonstrations, solely by searching over verified Lean kernels and symbolic geometry deductors [검증됨: https://research.google/pubs/olympiad-level-formal-mathematical-reasoning-with-reinforcement-learning/]. Similarly, TinyGSM proved that an external verifier plays a vastly more decisive role in accuracy than generator parameter scale: a 125M generator paired with a 1.3B verifier jumped from 63.1% to 76.1%, while a 1.3B+1.3B pair reached 81.5%, surpassing its GPT-3.5 teacher at 77.4% [검증됨: https://arxiv.org/html/2312.09241].
 
-Under our strict 100M parameter ceiling, neural verifiers (PRMs) exceeding 100M are explicitly banned as fair-play violations [검증됨: https://arxiv.org/html/2501.04519]. We replace neural judges with 0-parameter formal engines:
-1. Python 3.11 AST runtime for general deterministic computation and unit tests.
-2. SymPy Computer Algebra System (CAS) for exact symbolic simplification, equation solving, and equivalence proofs.
-3. Z3 SMT Theorem Prover for first-order logic, SAT satisfiability, and discrete constraint optimization.
+Under our strict 100M parameter ceiling, neural verifiers (PRMs) exceeding 100M are explicitly banned [검증됨: https://arxiv.org/html/2501.04519]. We replace neural judges with 0-parameter formal engines:
+1. Python 3.11 AST runtime for deterministic computation and unit tests.
+2. SymPy Computer Algebra System (CAS) for exact symbolic simplification and equivalence proofs.
+3. Z3 SMT Theorem Prover for first-order logic and discrete constraint optimization.
 4. Lean 4 interactive theorem prover kernel for formal axiomatic deduction.
-
-Because these engines run externally as deterministic executable processes, their evaluative capability costs exactly 0 learned weights, establishing a mathematically sound and un-hackable ground truth [추정].
+Because these engines run externally as deterministic processes, their evaluative capability costs exactly 0 learned weights, establishing an un-hackable ground truth [추정].
 
 ### 1.3 Why the Library-Growing Loop Compounds (DreamCoder Wake-Sleep)
-The core insight of the Library-Growing RSI engine is that reasoning capability compounds through symbolic abstraction, not weight expansion [검증됨: https://arxiv.org/abs/2006.08381v1]. In raw search over primitive tokens, combinatorial explosion renders hard problems intractable: solving a 50-step formal proof requires exploring an AST of depth 50, where search complexity scales as $O(b^{50})$ for branching factor $b$.
+Reasoning capability compounds through symbolic abstraction, not weight expansion [검증됨: https://arxiv.org/abs/2006.08381v1]. In raw search over primitive tokens, combinatorial explosion renders hard problems intractable: solving a 50-step formal proof requires exploring an AST of depth 50, scaling as $O(b^{50})$ for branching factor $b$.
 
 Following the Wake-Sleep paradigm established by DreamCoder and LILO [검증됨: https://arxiv.org/abs/2006.08381v1, https://arxiv.org/html/2310.19791v2]:
-- **Wake Phase**: The core acts as a neuro-symbolic compiler. Given a natural language problem, search guided by a small policy/value core emits a program in a Domain-Specific Language (DSL) augmented by a growing skill library $\mathcal{P}_g$. The program is executed and verified by 0-parameter engines.
-- **Sleep Phase (Abstraction)**: A 0-parameter symbolic compression algorithm (Stitch / anti-unification) inspects verified solutions across the population, discovers repeated sub-AST execution graphs, and abstracts them into new named library primitives:
+- **Wake Phase**: The core acts as a neuro-symbolic compiler. Guided by a small policy/value core, it emits a program in a Domain-Specific Language (DSL) augmented by a growing skill library $\mathcal{P}_g$. The program is verified by 0-parameter engines.
+- **Sleep Phase (Abstraction)**: A 0-parameter symbolic compression algorithm (Stitch) inspects verified solutions, discovers repeated sub-AST execution graphs, and abstracts them into new named library primitives:
   $$\Delta \text{DL}(p) = \text{size}(p) \cdot \text{count}(p) - \text{overhead}$$
-  These macro-primitives are appended to the language specification $\mathcal{L}_{g+1} = \mathcal{L}_g \cup \{p_1, p_2, \dots, p_K\}$.
-- **Sleep Phase (Dreaming & Retraining)**: The core generates synthetic "dreams" by sampling well-typed programs directly from the expanded grammar of $\mathcal{L}_{g+1}$, runs them through executors to generate novel input-output pairs or verified lemmas, and retrains its recognition policy on refactored wake traces and dreams.
+  These macro-primitives are appended to the language: $\mathcal{L}_{g+1} = \mathcal{L}_g \cup \{p_1, \dots, p_K\}$.
+- **Sleep Phase (Dreaming & Retraining)**: The core generates synthetic "dreams" by sampling well-typed programs from $\mathcal{L}_{g+1}$, runs them through executors to generate verified input-output pairs or lemmas, and retrains its recognition policy on refactored wake traces and dreams.
 
-**Why this compounds**: In generation $g+1$, a 50-step task that previously required depth 50 can now be expressed as a 3-step invocation of newly coined library primitives ($d=3$). Search depth is drastically compressed, allowing the fixed-capacity 100M core to conquer problems that were previously beyond its computational horizon. The skill library is purely symbolic external code; it occupies 0 parameters in the neural network, persists across generations, and transfers without friction to larger models [가설].
+In generation $g+1$, a 50-step task that previously required depth 50 can be expressed as a 3-step invocation of newly coined library primitives ($d=3$). Search depth is compressed, allowing the 100M core to conquer problems beyond its raw computational horizon. The skill library occupies 0 parameters in the neural network, persists across generations, and transfers frictionlessly to larger models [가설].
 
 ```
                   ┌───────────────────────────────────────────────┐
                   │                 WAKE PHASE                    │
-                  │  Problems -> Search (Core Policy + Value)     │
-                  │              -> Candidate AST Programs         │
+                  │  Problems -> Search -> Candidate AST Programs │
                   └───────────────────────┬───────────────────────┘
                                           │
                                           v
@@ -68,13 +66,13 @@ Following the Wake-Sleep paradigm established by DreamCoder and LILO [검증됨:
 ```
 
 ### 1.4 Why Dropping Language Generation Makes Each Generation Cheaper
-Human natural language is saturated with high-entropy stylistic fluff and conversational etiquette that consume massive parameter capacity [검증됨: https://arxiv.org/abs/2003.10555]. Language comprehension is fundamentally cheaper than language generation: ELECTRA-Small (14M parameters) scores 79.9 on GLUE dev, beating the 117M generative GPT-1 which required 29x more pretraining compute [검증됨: https://arxiv.org/abs/2003.10555]. DeBERTa-v3-xsmall achieves 88.1/88.3 on MNLI with a 22M backbone [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]. Crucially, standard generative models waste over 40–60% of their parameters purely on output token embeddings (e.g., Gemma 3 270M expends 170M parameters on embeddings for a 256k vocabulary) [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/].
+Human natural language is saturated with high-entropy stylistic fluff that consumes massive parameter capacity [검증됨: https://arxiv.org/abs/2003.10555]. Language comprehension is fundamentally cheaper than language generation: ELECTRA-Small (14M parameters) scores 79.9 on GLUE dev, beating the 117M generative GPT-1 which required 29x more pretraining compute [검증됨: https://arxiv.org/abs/2003.10555]. DeBERTa-v3-xsmall achieves 88.1/88.3 on MNLI with a 22M backbone [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]. Crucially, standard generative models waste over 40–60% of their parameters purely on output token embeddings (e.g., Gemma 3 270M expends 170M parameters on embeddings for a 256k vocabulary) [검증됨: https://developers.googleblog.com/en/introducing-gemma-3-270m/].
 
-By adopting the "aphasic genius" architecture:
+Under the "aphasic genius" design:
 1. The core model never emits natural language prose; it emits only formal, typed AST programs, symbolic expressions, and structured answer envelopes.
-2. The output vocabulary is constrained to a tiny, domain-specific formal token set ($V_{\text{formal}} = 2,048$ tokens for keywords, brackets, operators, and library primitive symbols), requiring only 1.05M parameters for output projections at $d=512$, compared to 100M+ for an open-vocabulary LLM [추정].
+2. The output vocabulary is constrained to a tiny formal token set ($V_{\text{formal}} = 2,048$), requiring only 1.05M parameters for output projections at $d=512$, compared to 100M+ for an open-vocabulary LLM [추정].
 3. Generation lengths are reduced by 5x to 10x: rather than outputting 1,000 tokens of conversational rationales, the core emits a 40-token formal script (`res = solve(Eq(x**2 - 5*x + 6, 0), x); print(max(res))`).
-4. Training FLOPs per generation ($6ND$) drop by an order of magnitude because token sequence lengths are compact ($L \le 256$). Inference rollout FLOPs during MCTS search scale down proportionally, enabling high-throughput self-play on zero-cost Kaggle compute [추정].
+4. Training FLOPs per generation ($6ND$) drop by an order of magnitude because token sequences are compact ($L \le 256$). Inference rollout FLOPs during MCTS search scale down proportionally, enabling high-throughput self-play on zero-cost Kaggle compute [추정].
 
 ---
 
@@ -100,7 +98,7 @@ Each RSI generation $g$ executes six decoupled phases:
    - Decoding is constrained by an AST grammar mask pushdown automaton, ensuring 100% syntactically valid code [검증됨: https://github.com/ElementAI/picard].
    - Best-First Beam Search guided by the shared Value Head executes with rollout budget $K = 32$ trajectories per problem [추정].
 3. **Phase 3: Mechanical Verification (0-Parameter Exact Checking)**:
-   - Programs are serialized to JSON and dispatched to isolated subprocess sandboxes containing 0-parameter execution engines:
+   - Programs are serialized to JSON and dispatched to isolated subprocess sandboxes:
      - Python 3.11 AST runtime for general algorithms and unit tests (1.0s timeout, 256MB cap).
      - SymPy CAS for exact symbolic equivalence.
      - Z3 SMT solver and VAL for discrete logic and planning [검증됨: https://arxiv.org/html/2305.15771v2].
@@ -112,7 +110,7 @@ Each RSI generation $g$ executes six decoupled phases:
      $$Score(p) = \Delta \text{DL}(p) - \lambda \cdot \text{Complexity}(p)$$
    - Top $K_{\text{new}} = 50$ primitives are added to library: $\mathcal{P}_{g+1} = \mathcal{P}_g \cup \{p_1, \dots, p_{50}\}$. Verified programs are refactored into canonical compressed representations.
 5. **Phase 5: Recognition Retraining & Dream Sleep (Wake-Sleep Policy Update)**:
-   - **Dream Synthesis**: The expanded grammar $\mathcal{L}_{g+1}$ is sampled stochastically to generate 50,000 dream programs executed forward through verifiers to yield valid (input, execution_trace, output) tuples.
+   - **Dream Synthesis**: Expanded grammar $\mathcal{L}_{g+1}$ is sampled stochastically to generate 50,000 dream programs executed forward through verifiers to yield valid (input, execution_trace, output) tuples.
    - **Training Set**: 25,000 refactored wake traces + 50,000 dream traces = 75,000 total traces (19.2M tokens).
    - **Optimization**: 3 epochs SFT followed by 1 pass GRPO (RLVR) with clipping, using binary execution correctness as ground-truth reward.
 6. **Phase 6: Expand DSL & Domain Staircase Monitoring**:
@@ -165,7 +163,7 @@ Capability
 ```
 
 **Concrete Domain Expansion Mechanism ("The Verifier Synthesizer Probe")**:
-1. **Saturation Detector**: The engine tracks domain saturation coefficient $\Psi_D(g)$:
+1. **Saturation Detector**: Tracks domain saturation coefficient $\Psi_D(g)$:
    $$\Psi_D(g) = \frac{\text{pass@1}(D)}{\text{pass@64}(D)} \times \left(1 - \frac{\Delta \text{DL}(\mathcal{P}_g)}{\text{DL}(\mathcal{P}_g)}\right)$$
    When $\Psi_D(g) \ge 0.95$ for two consecutive generations, domain $D$ is declared saturated.
 2. **0-Parameter Interface Bridge**: Registry of formal execution APIs (SymPy $\to$ Z3 SMT $\to$ Python Unit Tests $\to$ Lean 4 $\to$ RDKit / OpenMM).

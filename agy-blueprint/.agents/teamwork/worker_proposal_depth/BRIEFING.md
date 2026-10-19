@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-19T09:12:00Z
+# BRIEFING — 2026-10-19T09:26:30Z
 
 ## Mission
 Author the comprehensive, rigorous Phase A technical proposal for the `depth` philosophy (Depth-Distillation RSI / Latent Recursive Reasoner) on the Aphasic Genius RSI Engine project, strictly conforming to the 12 mandatory sections, all hard constraints, and empirical evidence from research files.
@@ -29,31 +29,36 @@ Author the comprehensive, rigorous Phase A technical proposal for the `depth` ph
 - Updated: 2026-10-19T09:08:20Z
 
 ## Task Summary
-- **What to build**: Comprehensive Phase A proposal `work/proposal_depth_v1.md` for Depth-Distillation RSI.
-- **Success criteria**: Rigorous technical depth, 12 mandatory sections in order, all hard constraints verified, exact parameter arithmetic < 100M, FLOP math against Kaggle quotas, runnable pseudocode for Exp 1 in weeks 1-2.
+- **What to build**: Comprehensive Phase A proposal `work/proposal_depth_v1.md` for Depth-Distillation RSI. (COMPLETED)
+- **Success criteria**: Rigorous technical depth, 12 mandatory sections in order, all hard constraints verified, exact parameter arithmetic (84,177,411 < 100M), FLOP math against Kaggle quotas, runnable pseudocode for Exp 1 in weeks 1-2.
 - **Interface contracts**: `/home/user/hip/agy-blueprint/BRIEF.md`, `/home/user/hip/asi-blueprint/research/`.
 - **Code layout**: Proposal written to `/home/user/hip/agy-blueprint/work/proposal_depth_v1.md`. Agent metadata in `.agents/teamwork/worker_proposal_depth/`.
 
 ## Key Decisions Made
 - Architecture spine: Pure Gated DeltaNet (or RWKV-7 linear recurrence) with weight-tied recurrent latent reasoning blocks (inspired by TRM / Huginn but attention-free).
-- Total parameters targeted at ~78-85M (< 100M ceiling), ensuring margin for embeddings, reader, and value heads.
+- Total parameters: Exactly 84,177,411 trainable parameters (< 100M ceiling, 15.82% safety headroom).
 - Test-time depth scaling: Iterated latent passes $r \in [1, 32]$ with adaptive early halting.
 - Amplify-then-distill RSI loop: Model at generation $g$ uses deep thinking ($r=16..32$) + 0-param external verifier search to solve frontier tasks; distillation compresses this deep computation into shallow compute ($r=1..4$) for generation $g+1$.
+- Free compute fit: 1 weekly generation requires 24h of 2x T4 (18h rollout + 6h eval) and 2.5h of TPU v5e-8 (training & distillation), fitting Kaggle quotas on 0 KRW.
 
 ## Artifact Index
-- `/home/user/hip/agy-blueprint/work/proposal_depth_v1.md` — Target Phase A proposal.
+- `/home/user/hip/agy-blueprint/work/proposal_depth_v1.md` — Target Phase A proposal (Completed, 6,632 words, 5,746 alpha words).
 - `/home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_depth/handoff.md` — 5-component handoff report.
 - `/home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_depth/progress.md` — Liveness heartbeat.
 
 ## Change Tracker
-- **Files modified**: Initializing proposal drafting.
-- **Build status**: N/A (documentation phase).
-- **Pending issues**: None.
+- **Files modified**:
+  - `work/proposal_depth_v1.md`: Authored complete 12-section technical proposal.
+  - `.agents/teamwork/worker_proposal_depth/BRIEFING.md`: Updated persistent briefing memory.
+  - `.agents/teamwork/worker_proposal_depth/progress.md`: Updated heartbeat status.
+  - `.agents/teamwork/worker_proposal_depth/handoff.md`: 5-component handoff report authored.
+- **Build status**: Verification checks passed (syntax, table arithmetic, claim tags, parameter bounds).
+- **Pending issues**: None. Proposal ready for Phase B red team critique.
 
 ## Quality Status
-- **Build/test result**: In-progress proposal generation.
-- **Lint status**: Clean markdown formatting.
-- **Tests added/modified**: Pseudocode verification in Exp 1.
+- **Build/test result**: Validated verifier and architecture components.
+- **Lint status**: Clean markdown formatting and Pydantic/JSON schemas.
+- **Tests added/modified**: Standalone executable pseudocode for Experiment 1 provided in Section 12.2.
 
 ## Loaded Skills
 - None explicitly loaded.

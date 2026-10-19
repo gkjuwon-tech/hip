@@ -9,12 +9,12 @@
 ## 1. Thesis
 
 ### 1.1 The Distillation Ceiling vs. The Verifier Ladder
-Distilling reasoning traces from frontier "teacher" models (Claude 3.5 Sonnet, GPT-4o, Gemini 1.5 Pro) fundamentally caps the student at the teacher's distribution [검증됨: https://arxiv.org/abs/2306.11644]. Teacher models are not AGI—they hallucinate mathematical identities, collapse on basic combinatorial planning (e.g., Blocksworld at 6.1% [검증됨: https://arxiv.org/html/2305.15771v2]), and suffer catastrophic performance drops when irrelevant clauses are injected (GSM-Symbolic drops up to 65% [검증됨: https://arxiv.org/abs/2410.05229]). In the user's framing, frontier models are "tin cans" (깡통); distilling a tin can yields only a smaller tin can. Crucially, empirical evidence demonstrates that RLVR on small models merely sharpens pre-existing coverage, narrowing pass@$k$ without discovering fundamentally new reasoning patterns [검증됨: https://arxiv.org/abs/2504.13837v4].
+Distilling reasoning traces from frontier models (Claude 3.5 Sonnet, GPT-4o, Gemini 1.5 Pro) fundamentally caps the student at the teacher distribution [검증됨: https://arxiv.org/abs/2306.11644]. Frontier teachers are not AGI—they hallucinate mathematical steps, collapse on elementary planning (e.g., Blocksworld at 6.1% [검증됨: https://arxiv.org/html/2305.15771v2]), and suffer catastrophic drops when irrelevant clauses are added (GSM-Symbolic drops up to 65% [검증됨: https://arxiv.org/abs/2410.05229]). In the user framing, frontier models are "tin cans" (깡통); distilling a tin can yields only a smaller tin can. Moreover, empirical RLVR research demonstrates that reinforcement learning on small models mostly sharpens pre-existing coverage, narrowing pass@k without discovering new reasoning patterns [검증됨: https://arxiv.org/abs/2504.13837v4].
 
-What replaces the teacher is **exact, zero-parameter mechanical verification** coupled with **test-time compute amplification** [가설]. In formal domains (Python execution, SymPy symbolic manipulation, Z3 SMT constraint solving, Lean 4 proof checking, and game rules), the environment supplies an immutable, binary ground truth [검증됨: https://arxiv.org/abs/2312.06585]. Here, the ceiling is governed by search budget and sound logical physics, not teacher consensus [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. AlphaGo Zero beat human-trained AlphaGo 100–0 starting from pure random play [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. AlphaProof proved Olympiad mathematics by searching against the Lean kernel [검증됨: https://research.google/pubs/olympiad-level-formal-mathematical-reasoning-with-reinforcement-learning/]. In tiny models, TinyGSM demonstrated that pairing a 125M–1.3B generator with an exact verifier allowed the student to beat its own GPT-3.5 teacher (81.5% vs. 77.4% on GSM8K) [검증됨: https://arxiv.org/html/2312.09241].
+What replaces the teacher is **exact, zero-parameter mechanical verification** coupled with **test-time compute amplification** [가설]. In formal domains (Python execution, SymPy symbolic manipulation, Z3 SMT solving, Lean 4 proof checking, and game rules), the environment supplies an immutable, binary ground truth [검증됨: https://arxiv.org/abs/2312.06585]. Here, the ceiling is governed by search budget and logical soundness, not human or teacher consensus [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. AlphaGo Zero defeated human-trained AlphaGo 100–0 starting from random play [검증됨: https://deepmind.google/blog/alphago-zero-starting-scratch/]. AlphaProof solved Olympiad mathematics by searching against the Lean kernel [검증됨: https://research.google/pubs/olympiad-level-formal-mathematical-reasoning-with-reinforcement-learning/]. In small models, TinyGSM showed that pairing a generator with an exact verifier allowed the student to beat its own GPT-3.5 teacher (81.5% vs. 77.4% on GSM8K) [검증됨: https://arxiv.org/html/2312.09241].
 
 ### 1.2 The Depth-Distillation Compounding Ratchet
-The `depth` philosophy solves the central paradox of tiny-model reasoning (<100M parameters) via **Amplify-then-Distill Recurrent Latent Depth** [가설]:
+The `depth` philosophy resolves the tiny-model reasoning paradox (<100M parameters) via **Amplify-then-Distill Recurrent Latent Depth** [가설]:
 1. **Weight-Tied Latent Recurrence:** Instead of stacking hundreds of physical layers, the core uses an 8-layer attention-free recurrent trunk (Gated DeltaNet / RWKV-7). At test time, this trunk iterates $r$ recursion steps ($r \in [1, 32]$) over its latent state, yielding an effective computational depth of up to 256 layers while executing exactly 41M recurrent parameters [검증됨: https://arxiv.org/html/2510.04871v1].
 2. **Search Amplification:** On difficult problems, the engine allocates high recursion depth ($r=16..32$) and runs beam search over intermediate formal steps, discovering valid solutions that shallow computation ($r=1..4$) cannot sample [검증됨: https://arxiv.org/abs/2408.03314].
 3. **Exact Verification:** Emitted candidate programs or proofs are executed in an external sandbox (Python/SymPy/Z3/Lean). Only 100% verified solutions are retained.
@@ -42,7 +42,7 @@ Natural language models dedicate 40%–65% of their parameter budget solely to e
 By dropping natural language generation entirely ("the aphasic genius"):
 1. **Vocabulary Shrinkage:** The core uses a 16k input reading vocabulary and an ultra-compact 2,048-token formal output vocabulary (Python/SymPy/Lean AST nodes, numerals, logic symbols) [추정], slashing embedding parameters to ~11.8M total.
 2. **Dense Formal Representation:** The core emits structured AST expressions (20–80 tokens per solution), 10x to 20x shorter than conversational CoT [검증됨: https://arxiv.org/abs/2211.10435].
-3. **FLOP Economics:** Generating 50 formal tokens requires 1/20th the rollout FLOPs of generating 1,000 tokens of prose. On Kaggle's free compute, this 20x throughput multiplier enables 10–50 million verified problem attempts per week instead of a few hundred thousand [추정].
+3. **FLOP Economics:** Generating 50 formal tokens requires 1/20th the rollout FLOPs of generating 1,000 tokens of prose. On Kaggle free compute, this 20x throughput multiplier enables 10–50 million verified problem attempts per week instead of a few hundred thousand [추정].
 4. **Zero Sycophancy:** Because the core cannot emit English prose, it physically cannot engage in conversational drift, stylistic hedging, or sycophancy. 100% of gradient updates optimize pure logical state transitions [가설].
 
 ---
@@ -55,37 +55,28 @@ The Depth-Distillation RSI engine operates in a discrete generation loop ($g = 0
 ```
 +-------------------------------------------------------------------------------+
 |                        THE APHASIC RSI ENGINE LOOP                            |
-|                                                                               |
-|  [1. Task Proposer]                                                           |
-|     (PAIRED Learnability Regret + Procedural Generators + Replay Buffer)      |
+|  [1. Task Proposer] (PAIRED Learnability Regret + Procedural Generators)      |
 |               |                                                               |
 |               v                                                               |
-|  [2. Deep Solve & Search]                                                     |
-|     (Weight-Tied Recurrent Core, r in [1, 32] + Beam Search / MCTS)           |
+|  [2. Deep Solve & Search] (Weight-Tied Recurrent Core, r in [1, 32] + MCTS)   |
 |               |                                                               |
 |               v                                                               |
-|  [3. Sandboxed Exact Verifier]                                                |
-|     (Python 3.12 / SymPy / Z3 / Lean 4 / VAL / ARC Checker)                   |
+|  [3. Sandboxed Exact Verifier] (Python / SymPy / Z3 / Lean 4 / VAL / ARC)     |
 |               |                                                               |
 |        +------+------+                                                        |
-|        |             |                                                        |
-|     [Failed]     [Verified]                                                   |
-|        |             |                                                        |
+|        | [Failed]    | [Verified]                                             |
 |        v             v                                                        |
-|   (Curriculum   [4. Trajectory Filter & De-duplication]                       |
-|     Feedback)   (Retain frontier: solved at r >= 8, failed at r <= 2)         |
+|   (Curriculum)  [4. Trajectory Filter] (Retain frontier: solved at r >= 8)   |
 |                      |                                                        |
 |                      v                                                        |
 |                 [5. Multi-Task Training & Depth Distillation]                 |
 |                    - Shallow AST SFT (target r = 2..4)                        |
-|                    - Intermediate Latent State Distillation                   |
-|                    - GRPO Reinforcement Sharpening on Verifiable Rewards      |
+|                    - Latent State Distillation (Cosine Loss)                  |
+|                    - GRPO Reinforcement Sharpening                            |
 |                      |                                                        |
 |                      v                                                        |
 |                 [6. Checkpoint & Evaluator Sandbox]                           |
-|                    - Metric Evaluation on Frozen Held-out Sets                |
-|                    - Cord-Cut / Kill Switch Verification                      |
-|                    - Domain Saturation & S-Curve Advancement                  |
+|                    - Frozen Eval Sets / Cord-Cut Verification                 |
 +-------------------------------------------------------------------------------+
 ```
 
@@ -119,20 +110,7 @@ Stage 0 (Bootloader) utilizes open-licensed, non-OpenAI datasets (OpenMathInstru
 **Post-Cut Fuel:** Following cord-cut, fuel consists entirely of: procedural problem spaces, PAIRED self-proposed challenges, deep search rollouts ($r=16..32$) filtered by exact mechanical verifiers, and depth distillation into shallow weights.
 
 ### 2.4 S-Curve Staircase of Verifier Domains
-Progress within any single domain saturates into an S-curve [검증됨: https://arxiv.org/html/2602.10014v2]. Long-term compounding requires climbing a **staircase of S-curves** across verifier domains:
-
-```
-Capability
-    ^                                                    North Star: ASI
-    |                                              /--- (Bio/Drug Discovery)
-    |                                        /----+
-    |                                  /----+ (Lean 4 Olympiad Proofs)
-    |                            /----+ (Code & Unit Tests / LCB)
-    |                      /----+ (SymPy Algebra / Z3 SMT)
-    |                /----+ (Arithmetic & Procedural Puzzles)
-    |          /----+ (Bootloader Stage 0)
-    +------------------------------------------------------------------------> Time / Generations
-```
+Progress within any single domain saturates into an S-curve [검증됨: https://arxiv.org/html/2602.10014v2]. Long-term compounding requires climbing a **staircase of S-curves** across verifier domains: arithmetic $\to$ algebra/SMT $\to$ Lean 4 proofs $\to$ code with tests $\to$ physical simulators $\to$ North Star.
 
 **Next Domain Acquisition Mechanism:**
 1. **Saturation Detector:** When held-out delta drops below $\Delta_g < 0.5\%$ across 2 generations despite doubling search depth, the domain is marked *Saturated*.
@@ -140,7 +118,7 @@ Capability
 3. **Bidirectional Consistency Check:** The core synthesizes 1,000 problem-verifier pairs in the candidate domain. It validates that forward execution of candidate solution $S$ produces target $Y$, and inverse execution of constraint $Y$ uniquely determines $S$. If self-consistency exceeds 99.9% without non-deterministic crashes, the domain is promoted to *Active Training Fuel* [가설].
 
 ### 2.5 Generation Cycle Time and Free Quota Compute Fit
-We map 1 RSI generation to Kaggle's free weekly quota (2x NVIDIA T4 16 GB, ~30 GPU-h/wk; TPU v5e-8, ~20 h/wk; local RTX 3060 6 GB) [검증됨: https://gpuperhour.com/blog/free-cloud-gpus-and-credits].
+We map 1 RSI generation to Kaggle free weekly quota (2x NVIDIA T4 16 GB, ~30 GPU-h/wk; TPU v5e-8, ~20 h/wk; local RTX 3060 6 GB) [검증됨: https://gpuperhour.com/blog/free-cloud-gpus-and-credits].
 
 - **Core Parameters:** $N = 84.18 \times 10^6$ (~84.2M). Training FLOPs/token: $6N \approx 5.05 \times 10^8$.
 1. **Rollout & Search Phase (Kaggle 2x T4, 18 GPU-hours):**
@@ -199,7 +177,6 @@ The core is an attention-free, recurrence-based neural architecture designed to 
 ```
 +-----------------------------------------------------------------------------------+
 |                         THE APHASIC GENIUS CORE (84.18M)                          |
-|                                                                                   |
 |  Problem String (NL / Code / Math)                                                |
 |       |                                                                           |
 |       v                                                                           |
@@ -208,38 +185,33 @@ The core is an attention-free, recurrence-based neural architecture designed to 
 |       v                                                                           |
 |  [Bidirectional Gated DeltaNet Reader]     (4 Layers, d = 640)        [20.49M]    |
 |       |                                                                           |
-|       +------------------------------------+                                      |
-|       | Context Embeddings C in R^{L x d}  | Problem Summary h_0 in R^d           |
-|       v                                    v                                      |
+|       v Context Embeddings C in R^{L x d}                                         |
 |  +-----------------------------------------------------------------------------+  |
 |  | RECURRENT REASONING TRUNK (Weight-Tied Gated DeltaNet)            [40.98M]  |  |
 |  | 8 Physical Layers (d = 640, SwiGLU d_ffn = 1,600, Delta-Rule Memory)       |  |
-|  |                                                                             |  |
 |  |   Iterative Recurrence: For t = 1 to r (r in [1, 32]):                      |  |
-|  |     h_t = RecurrentBlock(h_{t-1}, C)                                        |  |
-|  |     Effective Computational Depth = 8 * r (Up to 256 Layers!)               |  |
+|  |     h_t = RecurrentBlock(h_{t-1}, C) (Effective Depth = 8 * r <= 256 Layers)|  |
 |  +-----------------------------------------------------------------------------+  |
 |       |                                    |                                      |
 |       v                                    v                                      |
-|  [Adaptive Halting Head]             [Formal Output Emitter]                      |
-|  (PonderNet ACT Gate)                (2 Causal GDN Layers, d=640)     [10.25M]    |
-|  p_halt in [0, 1]                    Formal Vocab Projection (V=2,048) [1.31M]    |
-|  [0.16M]                                   |                                      |
-|       |                                    v                                      |
-|  [Value & Confidence Heads]          [Grammar-Constrained AST Token Generation]   |
-|  (MCTS Value V in [-1, 1]) [0.49M]   (Python / SymPy / Z3 / Lean 4 Formal DSL)    |
+|  [Adaptive Halting & Value Heads]    [Formal Output Emitter]                      |
+|  - Halting Gate p_halt in [0, 1]     (2 Causal GDN Layers, d=640)     [10.25M]    |
+|  - MCTS Value V in [-1, 1] [0.65M]   Formal Vocab Projection (V=2,048) [1.31M]    |
+|                                            |                                      |
+|                                            v                                      |
+|                                      [Grammar-Constrained AST Token Generation]   |
 +-----------------------------------------------------------------------------------+
 ```
 
 ### 5.2 Dataflow Description
-1. **Comprehension:** Input text is tokenized ($V_{\text{in}} = 16,384$) and projected to $d = 640$. The 4-layer bidirectional Gated DeltaNet reader scans the sequence forward and backward, producing context matrix $C \in \mathbb{R}^{L \times 640}$ and initial thought vector $h_0 \in \mathbb{R}^{640}$ [검증됨: https://arxiv.org/abs/2403.03234].
+1. **Comprehension:** Input text is tokenized ($V_{\text{in}} = 16,384$) and projected to $d = 640$. The 4-layer bidirectional Gated DeltaNet reader scans forward and backward, producing context matrix $C \in \mathbb{R}^{L \times 640}$ and initial thought vector $h_0 \in \mathbb{R}^{640}$ [검증됨: https://arxiv.org/abs/2403.03234].
 2. **Latent Recurrent Thought:** 8 weight-tied reasoning layers update the thought state: $h_t = \text{GatedDeltaNetBlock}(h_{t-1}, C), t \in \{1, \dots, r\}$. Each block utilizes data-dependent delta-rule recurrence:
    $$S_k = \alpha_k S_{k-1} + \beta_k (v_k - S_{k-1} q_k) k_k^T$$
    This updates the memory matrix $S \in \mathbb{R}^{d_k \times d_v}$ with targeted erasure and replacement, providing associative recall without sequence-length softmax [검증됨: https://arxiv.org/abs/2412.06464v3].
 3. **Halting & Search:** At each step $t$, the halting head predicts $p_{\text{halt}}(t) = \sigma(W_{\text{halt}} h_t)$. In search mode, the value head outputs $V(h_t) \in [-1, 1]$ to guide MCTS expansion.
 4. **Formal Emission:** Final thought state $h_r$ conditions the 2-layer formal emitter. A zero-parameter grammar mask (finite state machine) restricts logits strictly to valid Python/SymPy/AST syntax, completely eliminating syntax errors [검증됨: https://github.com/ElementAI/picard].
 
-### 5.3 Exact Structured Output Format Sent to Renderer
+### 5.3 Structured Output Schema Sent to Renderer
 The core never outputs English text. Its entire interface contract with the outside world is serialized JSON conforming to this strict schema:
 
 ```json
@@ -248,10 +220,7 @@ The core never outputs English text. Its entire interface contract with the outs
   "status": "VERIFIED_SUCCESS",
   "recursion_depth_used": 14,
   "formal_program": "def solve():\n    s0 = 120\n    s1 = s0 - (s0 * 15 // 100)\n    s2 = s1 + 25\n    return s2",
-  "execution_result": {
-    "return_type": "int",
-    "value": "127"
-  },
+  "execution_result": {"return_type": "int", "value": "127"},
   "formal_trace": [
     {"step": 1, "op": "ASSIGN", "target": "s0", "expr": "120"},
     {"step": 2, "op": "SUB", "target": "s1", "expr": "120 - 18"},
@@ -289,39 +258,12 @@ The total is **84,177,411 parameters** (~84.18M), leaving an unallocated safety 
 
 ## 6. Fair-Play Rules
 
-```
-+-------------------------------------------------------------------------------+
-|                           RENDERER FIREWALL PROTOCOL                          |
-|                                                                               |
-|  [Benchmark Question]                                                         |
-|         |                                                                     |
-|         | (1. Read DIRECTLY by Core; No Parser/LLM Front-End)                 |
-|         v                                                                     |
-|  +-----------------------------+                                              |
-|  |     <100M APHASIC CORE      | ----> [Scoring Harness: DIRECT EVALUATION]   |
-|  +-----------------------------+       (Core's Answer Scored Without Renderer)|
-|         |                                                                     |
-|         | (2. Strict Blindfold: JSON CoreTrace ONLY; Question STRIPPED)       |
-|         v                                                                     |
-|  ============================== FIREWALL ===================================  |
-|         v                                                                     |
-|  +-----------------------------+                                              |
-|  |     OFF-THE-SHELF RENDERER  |                                              |
-|  |    (Qwen3-1.7B / Gemma 4B)  |                                              |
-|  +-----------------------------+                                              |
-|         |                                                                     |
-|         | (3. Counterfactual Swap Test: If Core Answer Corrupted,             |
-|         v     Renderer MUST Output Wrong Answer >= 99%)                       |
-|  [Fluent Natural Language Human Explanation]                                  |
-+-------------------------------------------------------------------------------+
-```
-
 1. **The Renderer Firewall (The Blindfold):**
    - *Question Stripping:* The renderer prompt is constructed exclusively from `CoreTrace`. The natural language question is physically withheld. A static linter asserts zero shared 8-grams between prompt and question [검증됨: `io_split.md` §4].
    - *Core-Only Scoring:* All benchmark scores are computed **directly** from `core.execution_result.value`. The renderer is completely unloaded during evaluation.
    - *Renderer-Alone Controls:* We publish three control baselines: Control A (raw question ceiling), Control B (empty/shuffled trace $\to$ chance), Control C (trace with answer masked $\to$ must score $\le \text{chance} + 2\sigma$).
-   - *Counterfactual Swap Test:* Corrupting the core's answer (e.g., $42 \to 41$) must result in the renderer verbalizing the corrupted value in $\ge 99.0\%$ of cases. "Fixing" the answer disqualifies the run [검증됨: `io_split.md` §4].
-2. **Direct Core Input Reading:** Input text is ingested directly by the core's bidirectional Gated DeltaNet reader. No external LLM or parser is permitted.
+   - *Counterfactual Swap Test:* Corrupting the core answer (e.g., $42 \to 41$) must result in the renderer verbalizing the corrupted value in $\ge 99.0\%$ of cases. "Fixing" the answer disqualifies the run [검증됨: `io_split.md` §4].
+2. **Direct Core Input Reading:** Input text is ingested directly by the core bidirectional Gated DeltaNet reader. No external LLM or parser is permitted.
 3. **RSI Sandbox Integrity:** Verifiers and evaluation sets reside on a read-only Docker mount. Container operates with `--network none` and drops all capabilities. SHA-256 hashes are verified every generation boot.
 4. **Anti-Contamination Commit-Reveal:** SHA-256 hashes of private evaluation sets are published prior to training. A 13-gram overlap filter scrubs all training data against test splits [검증됨: `reason_baseline.md` §4]. **Zero GPT-3.5/GPT-4 Data:** In compliance with BRIEF.md §2.6, no OpenAI-derived synthetic datasets are permitted in training [검증됨: https://openai.com/en-GB/policies/terms-of-use/].
 
@@ -335,39 +277,29 @@ $$G = T + \max\left(10, \frac{100 - T}{3}\right)$$
 
 | # | Benchmark Row | Max GPT-3.5 ($T$) | **G Margin Target** | Core Target Score | Expected Gen ($g^*$) | Winning Mechanism |
 |---|---|---|---|---|---|---|
-| **A1** | **GSM8K (0-shot)** | 78.1 [V: 2404.14219] | **88.1** | **90.4** | Gen 4 | Program-of-Thought formalization + Python execution + $r=16$ self-consistency |
-| **A2** | **GSM-Plus (Robust Twin)** | 61.2 [V: 2402.19255] | **74.1** | **78.5** | Gen 5 | Invariant AST execution; immune to number/distractor clause swaps [V: 2410.05229] |
-| **A3** | **MATH (Full 5k)** | 43.1 [V: baseline.md] | **62.1** | **64.5** | Gen 7 | SymPy symbolic solver offload + MCTS beam search over algebraic AST steps |
-| **A4** | **SVAMP** | 83.0 [V: Faithful-CoT] | **93.0** | **94.2** | Gen 4 | Constrained AST parsing; eliminates word-order distractor errors |
-| **A5** | **BBH (All 27 Tasks)** | 70.7 [V: CoT-Hub] | **80.7** | **83.1** | Gen 6 | Algorithmic trace induction; CLRS GNN pretraining transfer [V: 2209.11142] |
+| **A1** | **GSM8K (0-shot)** | 78.1 [V: 2404.14219] | **88.1** | **90.4** | Gen 4 | PoT formalization + Python execution + $r=16$ consistency |
+| **A2** | **GSM-Plus (Robust Twin)** | 61.2 [V: 2402.19255] | **74.1** | **78.5** | Gen 5 | Invariant AST execution; immune to distractor swaps [V: 2410.05229] |
+| **A3** | **MATH (Full 5k)** | 43.1 [V: baseline.md] | **62.1** | **64.5** | Gen 7 | SymPy solver offload + MCTS beam search over AST |
+| **A4** | **SVAMP** | 83.0 [V: Faithful-CoT] | **93.0** | **94.2** | Gen 4 | Constrained AST parsing; eliminates distractor errors |
+| **A5** | **BBH (All 27 Tasks)** | 70.7 [V: CoT-Hub] | **80.7** | **83.1** | Gen 6 | Algorithmic trace induction; CLRS pretraining transfer [V: 2209.11142] |
 | **A6** | **ARC-AGI-1 (Public Eval)** | 10.6 [V: 2307.04721] | **40.4** | **46.8** | Gen 3 | TRM-style weight-tied grid recurrence ($r=32$) [V: 2510.04871v1] |
-| **A7** | **HumanEval+** | 70.7 [V: EvalPlus] | **80.7** | **82.5** | Gen 5 | Unit-test execution sandbox + multi-step AST self-repair loop |
-| **A8** | **MBPP+** | 69.7 [V: EvalPlus] | **79.8** | **81.4** | Gen 5 | Python interpreter execution + grammar-constrained PICARD decoding |
-| **A9** | **LiveCodeBench (Fresh)** | 22.6 [V: 2403.07974] | **48.4** | **51.2** | Gen 8 | Test-time search with execution feedback on post-cutoff coding tasks |
-| **A10**| **CRUXEval-O** | 63.3 [V: 2401.03065] | **75.6** | **77.8** | Gen 5 | Recurrent latent execution simulation; state tracking via Delta-rule memory |
-| **A11**| **DROP (F1)** | 70.2 [V: baseline.md] | **80.2** | **82.0** | Gen 6 | 0-parameter suffix-automaton span copy + Python arithmetic offload |
-| **A12**| **FOLIO / ProofWriter** | 62.7 / 71.5 [V: 2305.12295] | **75.2 / 81.5** | **78.4 / 85.0** | Gen 4 | Autoformalization to First-Order Logic + Z3 SMT solver verification |
+| **A7** | **HumanEval+** | 70.7 [V: EvalPlus] | **80.7** | **82.5** | Gen 5 | Sandbox execution + multi-step AST self-repair loop |
+| **A8** | **MBPP+** | 69.7 [V: EvalPlus] | **79.8** | **81.4** | Gen 5 | Python interpreter execution + grammar-constrained decoding |
+| **A9** | **LiveCodeBench (Fresh)** | 22.6 [V: 2403.07974] | **48.4** | **51.2** | Gen 8 | Test-time search with execution feedback on fresh code |
+| **A10**| **CRUXEval-O** | 63.3 [V: 2401.03065] | **75.6** | **77.8** | Gen 5 | Recurrent latent execution simulation via Delta-rule memory |
+| **A11**| **DROP (F1)** | 70.2 [V: baseline.md] | **80.2** | **82.0** | Gen 6 | 0-param suffix-automaton copy + Python arithmetic offload |
+| **A12**| **FOLIO / ProofWriter** | 62.7 / 71.5 [V: 2305.12295] | **75.2 / 81.5** | **78.4 / 85.0** | Gen 4 | FOL formalization + Z3 SMT solver verification |
 | **A13**| **LogiQA 2.0 / ReClor** | 52.4 / 57.4 [V: 2304.03439] | **68.2 / 71.6** | **72.0 / 73.5** | Gen 7 | Bidirectional reading + constraint satisfaction formalization |
-| **A14**| **MuSR (MM / OP / TA)** | 70.0 / 58.2 / 78.8 [V] | **80.0 / 72.1 / 88.8**| **82.4 / 74.5 / 90.1**| Gen 8 | Dense narrative state tracking across $r=16$ latent recurrence steps |
+| **A14**| **MuSR (MM / OP / TA)** | 70.0 / 58.2 / 78.8 [V] | **80.0 / 72.1 / 88.8**| **82.4 / 74.5 / 90.1**| Gen 8 | Dense state tracking across $r=16$ latent recurrence steps |
 | **A15**| **Game of 24 (100 Hard)** | 19.0 [V: 2305.10601] | **46.0** | **98.0** | Gen 1 | Exhaustive arithmetic AST search with SymPy evaluation |
 | **A16**| **Blocksworld (PlanBench)**| 6.1 [V: 2305.15771] | **37.4** | **88.5** | Gen 2 | PDDL formalization + external VAL plan validator [V: 2305.15771v2] |
-| **A17**| **KMMLU-Math (Korean)** | 30.3 [V: 2402.11548] | **53.5** | **56.0** | Gen 6 | Multilingual subword embedding + Korean arithmetic AST formalization |
-| **B1** | **GPQA-Diamond** | 30.6 [V: 2311.12022] | **53.7** | **55.2** | Gen 10| BM25 + static 8M embedding retrieval over science datastore |
-| **B2** | **MedQA (USMLE 4-opt)** | 63.4 [V: 2404.14219] | **75.6** | **77.1** | Gen 9 | Retrieval-augmented medical entity extraction + option-elimination search |
+| **A17**| **KMMLU-Math (Korean)** | 30.3 [V: 2402.11548] | **53.5** | **56.0** | Gen 6 | Multilingual subword embedding + Korean arithmetic AST |
+| **B1** | **GPQA-Diamond** | 30.6 [V: 2311.12022] | **53.7** | **55.2** | Gen 10| BM25 + static 8M embedding retrieval over science store |
+| **B2** | **MedQA (USMLE 4-opt)** | 63.4 [V: 2404.14219] | **75.6** | **77.1** | Gen 9 | Retrieval-augmented medical entity extraction + search |
 
 *Win Condition Summary:* Every Tier A and Tier B row satisfies margin $G$. Geometric mean ratio over GPT-3.5 exceeds $1.34\times$ [추정].
 
 ### 7.2 The Subsequent Rungs of the Ladder
-
-```
-RSI Generation Ladder:
-  Rung 1: GPT-3.5 Defeated (Gen 4-8)      --> 100% Probability [추정]
-  Rung 2: GPT-4-Level Reasoning (Gen 12-16) --> 75% Probability  [추정]
-  Rung 3: o1 / DeepSeek-R1 Level (Gen 20-28) --> 45% Probability [가설]
-  Rung 4: Frontier "Tin Cans" (Gen 35-50)  --> 25% Probability [가설]
-  Rung 5: Superhuman / ASI North Star     --> 10% Probability [가설]
-```
-
 1. **Rung 2: GPT-4-Level Reasoning (MATH > 70%, LiveCodeBench > 40%):** Prerequisites: Python execution mastery; verified skill library containing $>2,000$ algorithmic primitives. Probability: **75%** [추정].
 2. **Rung 3: o1 / DeepSeek-R1-Level Reasoning (AIME > 50%, MATH > 85%):** Prerequisites: Test-time depth $r \ge 32$ combined with Lean 4 formal proof verification. Probability: **45%** [가설].
 3. **Rung 4: Frontier "Tin Cans" (Surpassing Claude 3.5 Sonnet on reasoning):** Prerequisites: Transition to 1B core via TPU Research Cloud (TRC); datastore $>100\text{B}$ tokens. Probability: **25%** [가설].
@@ -381,7 +313,7 @@ RSI Generation Ladder:
 In compliance with BRIEF.md §2.6, all OpenAI-derived synthetic datasets are banned [검증됨: https://openai.com/en-GB/policies/terms-of-use/]. Stage 0 Bootloader data consists exclusively of open-licensed data:
 1. **OpenMathInstruct-2 (Sub-sample of 2.0M pairs):** CC-BY-4.0. Synthesized by Llama-3.1-405B; filtered by code execution [검증됨: https://huggingface.co/datasets/nvidia/OpenMathInstruct-2].
 2. **Reasoning Gym (500k procedural instances):** Apache-2.0. Algorithmic arithmetic, logic, and graph tasks with exact ground truth [검증됨: https://arxiv.org/pdf/2505.24760].
-3. **re-ARC (400k transformation pairs):** Apache-2.0. Procedural ARC task generators running on Hodel's DSL [검증됨: https://arxiv.org/pdf/2404.07353].
+3. **re-ARC (400k transformation pairs):** Apache-2.0. Procedural ARC task generators running on Hodel DSL [검증됨: https://arxiv.org/pdf/2404.07353].
 4. **FineWeb-Edu & FineWeb-2 Korean (Curated 1.5B token procedural subset):** ODC-BY. Filtered for high-educational mathematical text [검증됨: https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu, https://arxiv.org/abs/2506.20920v1].
 5. **The Stack v2 Permissive (Python subset, 500M tokens):** Permissive licenses (MIT/Apache/BSD) filtered by Python AST parser [검증됨: https://arxiv.org/pdf/2402.19173].
 
@@ -399,7 +331,7 @@ In compliance with BRIEF.md §2.6, all OpenAI-derived synthetic datasets are ban
 ### 8.3 Hardware Engineering Notes & Inference Latency
 1. **NVIDIA T4 (sm_75):** No hardware bf16 [검증됨: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/tesla-t4/t4-tensor-core-datasheet-951643.pdf]. Runs fp16 with dynamic loss scaling; state accumulators kept in fp32. Pin Triton 3.2.0 (Triton $\ge 3.3$ dropped sm_75 [검증됨: https://raw.githubusercontent.com/triton-lang/triton/v3.3.0/README.md]).
 2. **Kaggle TPU v5e-8:** Pure JAX using `jax.lax.associative_scan` with static tensor shapes.
-3. **Inference Latency:** At depth $r=8$, generating 50 formal tokens requires $\approx 6.7 \times 10^8$ FLOPs. Latency on single T4 is $\approx 18\text{ ms}$; cost is \$0.00.
+3. **Inference Latency:** At depth $r=8$, generating 50 formal tokens requires $\approx 6.7 \times 10^8$ FLOPs. Latency on single T4 is $\approx 18\text{ ms}$; cost is $0.00.
 
 ---
 
@@ -452,7 +384,7 @@ INPUT JSON:
 
 ### 10.2 Compute Acquisition Strategy
 1. **Milestone 1 (Weeks 1–8):** Publish verifiable benchmark victories over GPT-3.5 across all Tier A rows using 0 KRW Kaggle compute with full commit-reveal and reproducible notebooks.
-2. **Milestone 2 (Weeks 9–12):** Apply to Google's **TPU Research Cloud (TRC)** with verified results [검증됨: https://sites.research.google/trc/faq/]. Apply for Modal and Hugging Face compute grants [검증됨: `compute.md` §5].
+2. **Milestone 2 (Weeks 9–12):** Apply to Google **TPU Research Cloud (TRC)** with verified results [검증됨: https://sites.research.google/trc/faq/]. Apply for Modal and Hugging Face compute grants [검증됨: `compute.md` §5].
 3. **Milestone 3 (Months 4–6):** Scale to 1B parameters on TRC TPU pods, targeting Rung 3 (o1-level formal reasoning).
 
 ### 10.3 North Star: Drug Discovery via Simulators as Verifiers
@@ -464,31 +396,6 @@ INPUT JSON:
 ---
 
 ## 11. Stage-Gated Safety Mechanisms
-
-```
-+-------------------------------------------------------------------------------+
-|                       STAGE-GATED SAFETY INFRASTRUCTURE                       |
-|                                                                               |
-|  [DAY 1: FOUNDATIONAL ISOLATION]                                              |
-|  - Verifiers, reward functions, and eval sets in READ-ONLY Docker sandbox.    |
-|  - Cryptographic SHA-256 hash validation at every generation boot.            |
-|  - Network access physically disabled (--network none).                       |
-|  - Automated kill switch on In-Loop vs Held-Out divergence (H_g > 5.0 pts).   |
-|                                                                               |
-|  [L4 / SELF-MODIFICATION GATEWAY]                                             |
-|  - Mandatory CRYPTOGRAPHIC HUMAN APPROVAL for any change to training code,   |
-|    hyperparameters, data generators, or scan kernels.                         |
-|  - Autonomous acquisition of external compute or storage is HARD BLOCKED.     |
-|                                                                               |
-|  [BIOLOGY & CHEMISTRY SHARD ACTIVATION]                                       |
-|  - Hard-coded non-learned regex filter blocking pathogen/toxin synthesis.     |
-|  - Formal external dual-use review required before loading bio tools.         |
-|  - Mandatory human wet-lab expert sign-off on any lab-actionable output.      |
-|                                                                               |
-|  [THE USER'S GOLDEN RULE]                                                     |
-|  - IF ANYTHING COULD HARM PEOPLE, STOP IMMEDIATELY.                           |
-+-------------------------------------------------------------------------------+
-```
 
 ### 11.1 Day 1 Safety Protocols (Active Immediately)
 1. **Immutable Evaluation & Reward Sandbox:** Evaluation sets, verifiers, and scoring code reside on a separate read-only mount. Grader monkey-patching is physically impossible [검증됨: https://metr.substack.com/p/2025-06-05-recent-reward-hacking].
@@ -503,6 +410,7 @@ No self-proposed modification to training scripts, optimizer hyperparameters, or
 1. **Non-Learned Toxin/Pathogen Blocklist:** Rigid non-learned regex and SMILES filter blocks chemical weapons, viral/bacterial toxins, and pathogen enhancement sequences [검증됨: `externalize.md` §9].
 2. **Dual-Use Review:** Independent review must certify the setup before biological simulator shards are mounted.
 3. **Zero Wet-Lab Direct Control:** System is air-gapped from automated lab equipment. Any actionable protocol requires human expert verification.
+4. **User Golden Rule:** If anything could harm people, stop immediately.
 
 ---
 
@@ -531,11 +439,10 @@ No self-proposed modification to training scripts, optimizer hyperparameters, or
 Experiment 1: Depth-Distillation RSI on Toy Domain (Game of 24)
 Hardware: 1x GPU (RTX 3060 6GB or Kaggle T4) | Dependencies: torch, sympy
 """
-import torch
+import torch, random
 import torch.nn as nn
 import torch.nn.functional as F
 from itertools import product
-import random
 
 # 1. Zero-Parameter Exact Verifier (Game of 24)
 def verify_game_of_24(numbers: list[int], expression_ast: str) -> bool:
@@ -569,7 +476,7 @@ class LatentDepthReasoner(nn.Module):
     def __init__(self, d_model: int = 128, vocab_size: int = 32):
         super().__init__()
         self.embed = nn.Embedding(vocab_size, d_model)
-        self.recurrent_cell = GatedDeltaRecurrentCell(d_model) # Weight-tied block
+        self.recurrent_cell = GatedDeltaRecurrentCell(d_model)
         self.emitter_head = nn.Linear(d_model, vocab_size)
 
     def forward(self, input_ids: torch.Tensor, depth_r: int):
