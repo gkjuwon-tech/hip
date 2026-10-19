@@ -108,7 +108,7 @@ Every proposal must contain these 12 sections, **in this order (RSI first)**:
 9. Renderer choice and integration (which open model, where it runs, prompt contract, faithfulness check).
 10. Scaling: how the RSI loop transfers 0.1B → 1B → 10B (warm-starting, carrying over the library and curriculum), and why humans (not the AI) would win more compute (e.g. TPU Research Cloud grants) with published results. North-star path: drug discovery via simulators as verifiers and information-gain experiment selection.
 11. Stage-gated safety mechanisms (see §6 of this brief).
-12. First 3 experiments for weeks 1–4 with go/kill criteria. **Experiment 1 must demonstrate one measurable self-improvement generation on a toy verifier domain within weeks 1–2.** Then the top risks.
+12. First 3 experiments for weeks 1–4 with go/kill criteria, written as **plans, not code**. **Experiment 1 must be a plan to demonstrate one measurable self-improvement generation on a toy verifier domain within weeks 1–2**: inputs, procedure as numbered plain-language steps, what is measured and how, a random-reward control arm, pass criterion, kill criterion, compute and wall-clock time. Then the top risks.
 
 ### Phase B: Red team (5 agents, one per proposal)
 Each red-teamer attacks one proposal and writes `work/critique_<name>.md` (≤ 2,000 words). Persona: a top ML/RL researcher who knows exactly how self-play systems fail, plus a Kaggle grandmaster who knows T4/TPU limits, plus a benchmark-integrity auditor. Attack in this priority order:
@@ -156,7 +156,7 @@ Each writer writes exactly one file in `sections/`, using **only** `work/bluepri
 | `sections/09.md` | 보스 사다리: GPT-3.5는 슬라임이다 | Per reasoning row: attack, expected score vs GPT-3.5, margin, at which generation. Then the ladder GPT-4 → o1/R1 → frontier tin cans → top human experts → north star, with what must be true at each rung and honest probabilities. End with a short ideal-scenario story of a future RSI dashboard. |
 | `sections/10.md` | 스케일링 & 북극성: 0.1B → 10B → ASI (신약·난제·코드) | How the RSI loop transfers to larger cores, what 1B/10B look like, the compute path (humans win grants with results), drug discovery with simulators as verifiers and information-gain experiment selection. |
 | `sections/11.md` | 능력 비례 안전장치: 빨리 달리려면 잘 서야 한다 | Stage-gated safety, presented seriously (humor allowed, content firm). See §6 of this brief. |
-| `sections/12.md` | 로드맵 · 첫 실험 · 리스크 · 부록 | 12-week roadmap where weeks 1–2 produce a measured self-improvement generation on a toy verifier domain; the first experiment with pseudo-code someone could start coding tomorrow; risk register and kill criteria; rejected alternatives; references (only real URLs from the research files or sources you actually opened). |
+| `sections/12.md` | 로드맵 · 첫 실험 · 리스크 · 부록 | 12-week roadmap where weeks 1–2 produce a measured self-improvement generation on a toy verifier domain; the first experiment as a complete plan (numbered steps, measurement, control arm, pass and kill criteria, compute and time) that an engineer could start implementing tomorrow; risk register and kill criteria; rejected alternatives; references (only real URLs from the research files or sources you actually opened). |
 
 Finally, concatenate `sections/00.md` … `sections/12.md` in order into **`FINAL_기획서.md`** in this directory.
 
@@ -174,7 +174,7 @@ The user explicitly asked for this to be **"개웃기게 길게"** — hilarious
   - The RSI loop is a **rocket**: the teacher is stage 1 and separates; verifiers are the infinite fuel of stage 2.
   - **GPT-3.5 is the first slime** after the tutorial, not the final boss.
 - **The jokes live in the prose. The technical content never jokes.** Numbers, tables, equations, tensor shapes, parameter counts, FLOP math, diagrams, and code must be precise and must match `work/blueprint_final.md` exactly. Never sacrifice correctness for a joke.
-- Every section starts with `# NN. <title>` and uses `##` / `###` below it. Use tables, ASCII or mermaid diagrams, and code blocks generously.
+- Every section starts with `# NN. <title>` and uses `##` / `###` below it. Use tables, equations, ASCII or mermaid diagrams, and schemas generously (code blocks are fine for diagrams and schemas). **Do not write executable programs or pseudocode scripts**; describe procedures as numbered plain-language steps.
 - **Length**: each section roughly 2,500–5,000 Korean words; section 02 may be longer. Long because it is dense, not because it repeats itself.
 - Label claims **[검증됨: url]**, **[추정]**, **[가설]**.
 - Cross-reference other sections ("→ 05장 참고") instead of repeating them.
@@ -208,7 +208,7 @@ Safety strength scales with capability. "Fast cars need better brakes."
 - [ ] Every GPT-3.5 target number matches `reason_baseline.md`; every margin uses the G rule.
 - [ ] The renderer firewall is enforced by design (blindfold, core-only scoring, renderer-alone control, input read by core).
 - [ ] No GPT-3.5/GPT-4-generated data anywhere (TinyGSM and MetaMathQA are banned).
-- [ ] Experiment 1 produces a measured self-improvement generation in weeks 1–2 and is specified well enough to start coding tomorrow.
+- [ ] Experiment 1 is a complete plan (not code) for a measured self-improvement generation in weeks 1–2, with a random-reward control arm, specified well enough that an engineer could start implementing it tomorrow.
 - [ ] Safety mechanisms from §6 are present and enforceable, not decorative.
 - [ ] Every claim is labeled; no invented URLs or scores.
 - [ ] The Korean sections are consistent with each other and with `work/blueprint_final.md`.
@@ -217,6 +217,9 @@ Safety strength scales with capability. "Fast cars need better brakes."
 
 ## 8. Forbidden moves
 
+- Do not write executable code, Python, pseudocode scripts, or simulated program output (such as print statements) anywhere. Equations, tables, diagrams and output schemas are allowed and required. Implementation is done later by a separate engineer.
+- Do not write scripts to generate, assemble, or count words in documents. Write documents directly. Word counts are soft guidance.
+- Read `/home/user/hip/agy-blueprint/AUDIT_FROM_CLAUDE.md` before Phase B and treat it as binding input.
 - Do not design anything for chat, writing, or fluency benchmarks.
 - Do not use a Transformer backbone, or a "hybrid" that hides attention layers.
 - Do not count the datastore or zero-parameter tools as parameters, but do count every learned weight, including learned retriever keys and judge networks.

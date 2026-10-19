@@ -1,4 +1,4 @@
-# BRIEFING — 2026-10-19T09:38:30Z
+# BRIEFING — 2026-10-19T09:40:00Z
 
 ## Mission
 Coordinate the RSI engine design project: route to Project Orchestrator, monitor progress via crons, enforce independent post-victory audit.
@@ -16,12 +16,12 @@ Coordinate the RSI engine design project: route to Project Orchestrator, monitor
 - Keep context ultra-light
 
 ## User Context
-- **Last user request**: Binding update with AUDIT_FROM_CLAUDE.md: soft word counts, no code (plans only), immediate Phase B start incorporating audit attacks on sections 1 & 2.
+- **Last user request**: Directive Clarification (09:39:30Z): NO CODE applies only to executable programs/scripts; tables/math/diagrams/schemas are preserved; Experiment 1 is an experiment PLAN; Phase B begins once Curiosity submits complete 12 sections; all proposals require full 12 sections.
 - **Pending clarifications**: none
-- **Delivered results**: Relayed binding update to Project Orchestrator.
+- **Delivered results**: Relayed both binding directives and clarification to Project Orchestrator.
 
 ## Project Status
-- **Phase**: in progress (transitioning to Phase B)
+- **Phase**: in progress (completing Phase A proposals before Phase B)
 - **Active Orchestrator**: 9d100903-3938-4939-8cb4-21dca26a45b4 (orchestrator_1)
 - **Crons**:
   - Cron 1 (Progress Reporting, */8): 35e41040-ddf7-4b38-af81-ae6329dd1512/task-22
@@ -33,7 +33,7 @@ Coordinate the RSI engine design project: route to Project Orchestrator, monitor
 - **Retry count**: 0
 
 ## Artifact Index
-- /home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md — Authoritative user request (including 09:38:06Z follow-up)
+- /home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md — Authoritative user request (including 09:38:06Z & 09:39:30Z directives)
 - /home/user/hip/agy-blueprint/.agents/teamwork/ORIGINAL_REQUEST.md — Mirror of authoritative user request
 - /home/user/hip/agy-blueprint/BRIEF.md — Binding project specification
 - /home/user/hip/agy-blueprint/AUDIT_FROM_CLAUDE.md — Binding external audit input for Phase B onward
