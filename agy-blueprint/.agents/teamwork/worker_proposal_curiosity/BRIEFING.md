@@ -26,14 +26,14 @@ Author a comprehensive, mathematically rigorous, and fully compliant Phase A Pro
 
 ## Task Summary
 - **What to build**: `work/proposal_curiosity_v1.md` detailing the Curiosity / World-Model RSI architecture (JEPA-style latent predictive model, epistemic curiosity / information gain task selection, non-Transformer recurrent core, exact verifiers, wet-lab simulation path).
-- **Success criteria**: All 12 mandatory sections present in exact order, exact parameter table summing to <100M (67,402,625 params), FLOP math matching Kaggle T4/TPU, runnable pseudocode for Exp 1 in weeks 1–2, 5-component handoff report.
+- **Success criteria**: All 12 mandatory sections present in exact order, exact parameter table summing to <100M (68,002,625 params), FLOP math matching Kaggle T4/TPU, runnable pseudocode for Exp 1 in weeks 1–2, 5-component handoff report.
 - **Interface contracts**: BRIEF.md §4, §6, §7; reason_baseline.md scoreboard and G-rule margins.
 - **Code layout**: Output at `/home/user/hip/agy-blueprint/work/proposal_curiosity_v1.md`, handoff at `.agents/teamwork/worker_proposal_curiosity/handoff.md`.
 
 ## Key Decisions Made
 - Core Architecture: `ORRERY-Curiosity` couplings 6-layer Bidirectional Gated DeltaNet input reader ($d=512$), 4-layer weight-tied recurrent reasoning core ($r \le 16$), and JEPA latent transition predictor $\hat{z}_{t+1} = \mathcal{T}(z_t, a_t)$.
 - Epistemic Curiosity: 3-head ensemble variance actively samples tasks by Expected Information Gain (EIG) with PAIRED asymmetric regret down-weighting.
-- Exact Parameter Budget: Exactly **67,402,625 trainable parameters** (< 100M budget, 32.6% headroom), fully itemized across 9 executed modules.
+- Exact Parameter Budget: Exactly **68,002,625 trainable parameters** (< 100M budget, 32.0% headroom), fully itemized across 9 executed modules.
 - Compute Envelope: Calibrated to Kaggle 2× T4 (30h/wk) and TPU v5e-8 (20h/wk). Stage 0 pretraining takes 43 min (TPU) / 7.2 h (2× T4). 1 RSI generation cycle takes ~12.1 min on 2× T4 (>35 gens/week).
 - Binding User Guidance: Word counts are soft guidance only per user dispatch (2026-10-19T09:38:31Z); final submitted document is 5,895 words.
 

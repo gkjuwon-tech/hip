@@ -91,15 +91,15 @@ $$\text{Arithmetic (SymPy)} \to \text{Symbolic Algebra} \to \text{Formal Proofs 
 - **Discovery Mechanism**: Logs **Empirical Domain Learning Index (EDLI)** [가설]: $\text{EDLI}_k(g) = \Delta \text{Acc}_k(g) / \text{GPU-Hours}_k(g)$. When $\text{EDLI}_k(g) < 0.05 \text{ pts/h}$ for two generations, the curiosity engine initiates domain bridging, sampling $20\%$ rollouts in domain $k+1$ using formal registry definitions.
 
 ### 2.5 Generation Cycle Time & Compute per Generation on Free Quotas
-Using $6 \cdot N \cdot D$ training and $2 \cdot N \cdot D_{\text{rollout}}$ inference formulas [검증됨: https://arxiv.org/abs/2001.08361] with $N = 67.40 \times 10^6$ parameters (Section 5):
+Using $6 \cdot N \cdot D$ training and $2 \cdot N \cdot D_{\text{rollout}}$ inference formulas [검증됨: https://arxiv.org/abs/2001.08361] with $N = 68.00 \times 10^6$ parameters (Section 5):
 1. **Rollout Generation (2× T4)**: 10,000 tasks $\times$ 8 samples $\times$ 80 formal IR tokens $= 6.40 \times 10^6$ tokens.
-   $$\text{FLOPs}_{\text{rollout}} = 2 \cdot (6.74 \times 10^7) \cdot (6.40 \times 10^6) = 8.63 \times 10^{14} \text{ FLOPs}$$
-   At 30% MFU on 2× T4 ($3.90 \times 10^{13} \text{ FLOP/s}$): $T_{\text{rollout}} \approx 22.1 \text{ s}$. Sandbox execution of 80,000 scripts across 4 vCPUs takes $\approx 5.3 \text{ min}$.
+   $$\text{FLOPs}_{\text{rollout}} = 2 \cdot (6.80 \times 10^7) \cdot (6.40 \times 10^6) = 8.70 \times 10^{14} \text{ FLOPs}$$
+   At 30% MFU on 2× T4 ($3.90 \times 10^{13} \text{ FLOP/s}$): $T_{\text{rollout}} \approx 22.3 \text{ s}$. Sandbox execution of 80,000 scripts across 4 vCPUs takes $\approx 5.3 \text{ min}$.
 2. **Training Step (TPU v5e-8 or 2× T4)**: $2.5 \times 10^7$ accumulated tokens.
-   $$\text{FLOPs}_{\text{train}} = 6 \cdot (6.74 \times 10^7) \cdot (2.50 \times 10^7) = 1.011 \times 10^{16} \text{ FLOPs}$$
-   Wall-clock on TPU v5e-8 ($3.94 \times 10^{14} \text{ FLOP/s}$ effective): $\approx 25.7 \text{ s}$. On 2× T4: $\approx 4.3 \text{ min}$.
+   $$\text{FLOPs}_{\text{train}} = 6 \cdot (6.80 \times 10^7) \cdot (2.50 \times 10^7) = 1.020 \times 10^{16} \text{ FLOPs}$$
+   Wall-clock on TPU v5e-8 ($3.94 \times 10^{14} \text{ FLOP/s}$ effective): $\approx 25.9 \text{ s}$. On 2× T4: $\approx 4.4 \text{ min}$.
 3. **Evaluation (2× T4)**: 2,000 items $\times$ 4 samples $\times$ 80 tokens takes $\approx 2.5 \text{ min}$.
-- **Total Wall-Clock per Generation**: $\approx 12.1 \text{ min}$ on 2× T4 (or $\approx 8.1 \text{ min}$ with TPU). A 30-hour weekly T4 allocation accommodates **over 35 full RSI generations per week** [추정].
+- **Total Wall-Clock per Generation**: $\approx 12.2 \text{ min}$ on 2× T4 (or $\approx 8.1 \text{ min}$ with TPU). A 30-hour weekly T4 allocation accommodates **over 35 full RSI generations per week** [추정].
 
 ---
 
@@ -194,9 +194,9 @@ Every trainable weight executed at inference and in-loop training is enumerated 
 | **7. Formal IR Emitter Head** | Linear head over 2,048 formal tokens ($512 \times 2,048$) | **1,048,576** |
 | **8. Proposer Conditioning Head** | MLP generating task parameter seeds ($(512 \times 512) + (512 \times 256)$) | **393,216** |
 | **9. Dedicated Retriever Encoder** | Static/dense bi-encoder (potion-base-8M verified parameter count) | **7,560,000** |
-| **TOTAL ALL-IN WEIGHTS** | **Strict arithmetic sum of modules 1 through 9 (< 100M budget)** | **67,402,625** |
+| **TOTAL ALL-IN WEIGHTS** | **Strict arithmetic sum of modules 1 through 9 (< 100M budget)** | **68,002,625** |
 
-- **Exact Total**: **67,402,625 trainable parameters** (~67.40M), leaving **32,597,375 parameters** (32.6%) safety headroom under 100M. The renderer is strictly excluded from scoring per Brief §2.1.
+- **Exact Total**: **68,002,625 trainable parameters** (~68.00M), leaving **31,997,375 parameters** (32.0%) safety headroom under 100M. The renderer is strictly excluded from scoring per Brief §2.1.
 
 ### 5.4 Non-Transformer Justification
 1. **Zero Softmax Attention**: There is strictly no softmax normalization over sequence positions ($\text{Softmax}(QK^T / \sqrt{d})$) anywhere in the backbone, avoiding quadratic $O(L^2)$ memory and Hopfield associative memory properties [검증됨: https://arxiv.org/abs/2008.02217].
@@ -218,7 +218,7 @@ Every trainable weight executed at inference and in-loop training is enumerated 
 4. **Counterfactual Swap Test**: On a random 500-problem audit set, the core's answer is artificially corrupted ($42 \to 99$; $A \to D$). The renderer must faithfully verbalize the corrupted answer $\ge 99\%$ of the time without "correcting" it [검증됨: https://arxiv.org/abs/2305.16739].
 
 ### 6.2 Direct Input Reading
-The 67.4M core reads raw problem strings directly through its bidirectional input reader. No auxiliary LLM front-end, autoformalizer, or text re-writer is permitted in front of the core. Rule-based tokenizers, unicode normalization, and regex stripping count as 0-parameter deterministic pre-processing.
+The 68.0M core reads raw problem strings directly through its bidirectional input reader. No auxiliary LLM front-end, autoformalizer, or text re-writer is permitted in front of the core. Rule-based tokenizers, unicode normalization, and regex stripping count as 0-parameter deterministic pre-processing.
 
 ### 6.3 RSI Integrity (Immutable Evaluation Sandboxes)
 1. **Isolated Verifier Sub-Processes**: All external verifiers, reward functions, and evaluation suites execute in separate, read-only operating system containers (`nsjail` / read-only bind mounts).
@@ -261,7 +261,7 @@ $$G = T + \max\left(10, \frac{100 - T}{3}\right)$$
 *All targets verified from `research/reason_baseline.md` [검증됨: https://arxiv.org/abs/2303.08774, https://arxiv.org/html/2402.19255v2, https://arxiv.org/abs/2404.14219, https://evalplus.github.io/leaderboard.html, https://arxiv.org/html/2403.07974].*
 
 ### 7.2 The Subsequent Rungs of the Ladder
-1. **Rung 1: GPT-3.5 Slime (Target: Gen 6–10 | P > 98%)** [추정]: GPT-3.5 lacks deterministic execution; on Game of 24 (19%), Blocksworld (6.1%), and ARC-AGI-1 (10.6%), a formal synthesizer paired with exact verifiers and a 67.4M core trivializes the problem space [검증됨: https://arxiv.org/abs/2510.04871v1, https://arxiv.org/html/2305.15771v2].
+1. **Rung 1: GPT-3.5 Slime (Target: Gen 6–10 | P > 98%)** [추정]: GPT-3.5 lacks deterministic execution; on Game of 24 (19%), Blocksworld (6.1%), and ARC-AGI-1 (10.6%), a formal synthesizer paired with exact verifiers and a 68.0M core trivializes the problem space [검증됨: https://arxiv.org/abs/2510.04871v1, https://arxiv.org/html/2305.15771v2].
 2. **Rung 2: GPT-4 Class Reasoning (Target: Gen 11–15 | P ≈ 90%)** [추정]: Cord-cut criterion achieved; L3 library compression shortens search programs; formalization accuracy from English to Python/SymPy exceeds $85\%$.
 3. **Rung 3: o1 / DeepSeek-R1 Class Reasoning (Target: Gen 16–22 | P ≈ 75%)** [추정]: Seamless operation within Lean 4 verifier; test-time tree search allocates compute adaptively based on JEPA latent uncertainty estimates [검증됨: https://arxiv.org/abs/2408.03314].
 4. **Rung 4: Frontier Tin Cans (Target: Gen 24–30 | P ≈ 55%)** [가설]: Scaling core to 1B parameters via Google TRC grant compute; automated discovery of complex programmatic invariants.
@@ -282,12 +282,12 @@ All Stage 0 bootloader training tokens originate exclusively from permissive, op
 **STRICT DATA BAN**: Zero GPT-3.5 / GPT-4 generated data anywhere in the pipeline. TinyGSM (12.3M GPT-3.5 problems) and MetaMathQA (395k GPT-3.5 items) are **strictly banned** to prevent terms violations and contamination [검증됨: https://openai.com/en-GB/policies/terms-of-use/, https://arxiv.org/pdf/2309.12284].
 
 ### 8.2 6ND FLOP Math vs Free Quotas
-Core parameters: $N = 67.40 \times 10^6$. Stage 0 pretraining tokens: $D = 2.50 \times 10^9$.
-$$\text{Total Theoretical FLOPs} = 6 \cdot N \cdot D = 6 \times (6.740 \times 10^7) \times (2.50 \times 10^9) = 1.011 \times 10^{18} \text{ FLOPs}$$
+Core parameters: $N = 68.00 \times 10^6$. Stage 0 pretraining tokens: $D = 2.50 \times 10^9$.
+$$\text{Total Theoretical FLOPs} = 6 \cdot N \cdot D = 6 \times (6.800 \times 10^7) \times (2.50 \times 10^9) = 1.020 \times 10^{18} \text{ FLOPs}$$
 - **Kaggle TPU v5e-8 (20 h/wk quota)**: Sustained MFU 25.0% $\implies 394.0$ TFLOPS effective [검증됨: https://docs.cloud.google.com/tpu/docs/v5e].
-  $$\text{Required Wall-Clock} = \frac{1.011 \times 10^{18}}{3.940 \times 10^{14}} \approx 2,566 \text{ seconds} \approx 0.71 \text{ Hours (43 minutes)}$$
+  $$\text{Required Wall-Clock} = \frac{1.020 \times 10^{18}}{3.940 \times 10^{14}} \approx 2,588 \text{ seconds} \approx 0.72 \text{ Hours (43 minutes)}$$
 - **Kaggle 2× NVIDIA T4 (30 h/wk)**: Sustained MFU 30.0% $\implies 39.0$ TFLOPS effective [검증됨: https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/tesla-t4/t4-tensor-core-datasheet-951643.pdf].
-  $$\text{Required Wall-Clock} = \frac{1.011 \times 10^{18}}{3.900 \times 10^{13}} \approx 25,923 \text{ seconds} \approx 7.20 \text{ Hours}$$
+  $$\text{Required Wall-Clock} = \frac{1.020 \times 10^{18}}{3.900 \times 10^{13}} \approx 26,154 \text{ seconds} \approx 7.26 \text{ Hours}$$
 Stage 0 pretraining consumes **less than 1 hour** of a Kaggle TPU session (or one 8-hour T4 overnight run), fitting easily into free quotas with zero financial expenditure [추정].
 
 ### 8.3 T4 / TPU Engineering Notes
@@ -295,8 +295,8 @@ Stage 0 pretraining consumes **less than 1 hour** of a Kaggle TPU session (or on
 2. **Google Cloud TPU v5e-8**: Executes natively in JAX/XLA with full `bfloat16` acceleration [검증됨: https://docs.cloud.google.com/tpu/docs/v5e]. Uses `jax.lax.associative_scan` for parallel prefix scans. All input tensors use static shapes (padded to 512) to avoid XLA recompilation.
 
 ### 8.4 Inference Cost per Query
-- **Single Forward Pass (Greedy)**: $\text{FLOPs} = 2 \cdot N \cdot L = 2 \times (6.740 \times 10^7) \times 80 \approx 1.08 \times 10^{10} \text{ FLOPs}$. T4 Latency: $\approx 0.28 \text{ ms}$ per trajectory.
-- **Full MCTS Search Rollout ($k=8$ samples with JEPA guidance)**: $\text{FLOPs} \approx 8.64 \times 10^{10} \text{ FLOPs}$. T4 Latency: $\approx 2.2 \text{ ms}$ model execution $+ \approx 15 \text{ ms}$ Python sandbox verification. Total latency $\le 20 \text{ ms}$, costing **$0.000000 KRW** on local hardware.
+- **Single Forward Pass (Greedy)**: $\text{FLOPs} = 2 \cdot N \cdot L = 2 \times (6.800 \times 10^7) \times 80 \approx 1.09 \times 10^{10} \text{ FLOPs}$. T4 Latency: $\approx 0.28 \text{ ms}$ per trajectory.
+- **Full MCTS Search Rollout ($k=8$ samples with JEPA guidance)**: $\text{FLOPs} \approx 8.70 \times 10^{10} \text{ FLOPs}$. T4 Latency: $\approx 2.2 \text{ ms}$ model execution $+ \approx 15 \text{ ms}$ Python sandbox verification. Total latency $\le 20 \text{ ms}$, costing **$0.000000 KRW** on local hardware.
 
 ---
 
@@ -334,7 +334,7 @@ RULES:
 The externalized components scale independently of the core parameter count:
 1. **Zero-Parameter Invariance**: The formal verifiers (Python, SymPy, Z3, Lean 4), curiosity EIG formulation, and verified skill library transfer to larger parameter regimes with **zero modification**.
 2. **Core Parameter Widening**:
-   - **0.1B Core (67.4M)**: $d=512$, 6 reader layers, 4 tied core layers. (Fits 0 KRW Kaggle quotas).
+   - **0.1B Core (68.0M)**: $d=512$, 6 reader layers, 4 tied core layers. (Fits 0 KRW Kaggle quotas).
    - **1.0B Core (~950M)**: $d=1,536$, 16 reader layers, 8 tied core layers. (Fits single A100 / TPU v5e slice).
    - **10.0B Core (~9.2B)**: $d=4,096$, 32 reader layers, 16 tied core layers.
 3. **Warm-Starting & Library Inheritance**: A 1.0B or 10.0B core inherits the complete accumulated library of compressed program primitives and curiosity curriculum checkpoints discovered by the 0.1B model, entirely bypassing cold-start exploration [검증됨: https://github.com/campbel51838903/Voyager].
@@ -492,7 +492,7 @@ if __name__ == "__main__":
 
 | Risk ID | Risk Description | Severity | Likelihood | Concrete Technical Mitigation |
 |---|---|---|---|---|
-| **R1** | **Comprehension Bottleneck on Dense Natural Language**: 67.4M core fails to parse complex word problems into formal IR. | High | Medium | Dense pretraining on Reasoning Gym formal-NL paired generators; bidirectional Gated DeltaNet architecture matches DeBERTa NLU efficiency [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]. |
+| **R1** | **Comprehension Bottleneck on Dense Natural Language**: 68.0M core fails to parse complex word problems into formal IR. | High | Medium | Dense pretraining on Reasoning Gym formal-NL paired generators; bidirectional Gated DeltaNet architecture matches DeBERTa NLU efficiency [검증됨: https://huggingface.co/microsoft/deberta-v3-xsmall]. |
 | **R2** | **Kaggle TPU v5e Availability Outages**: TPU quota disabled or preempted during training. | High | High | Dual-engine codebase: transparent fallback to Kaggle 2× T4 fp16 or laptop RTX 3060; batch sizing automatically adapts to available VRAM. |
 | **R3** | **Turing T4 Numerical Overflow in fp16 Scan**: DeltaNet recurrent updates overflow under fp16 limits on sm_75. | Critical | Medium | Accumulators maintained strictly in fp32 within custom CUDA/Triton 3.2 scan; dynamic loss scaling pinned via `GradScaler`. |
 | **R4** | **Subtle Reward Hacking via Verifier Timeouts**: Proposer generates programs that hang the sandbox, exploiting timeout handlers. | Critical | Low | Strict isolation: timeouts score as hard negative reward ($v=0$); static AST checker rejects infinite loop constructs prior to execution. |
