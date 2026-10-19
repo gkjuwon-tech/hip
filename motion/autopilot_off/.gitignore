@@ -1,0 +1,6 @@
+renders/
+*.mp4
+*.wav
+*.blend
+*.blend1
+__pycache__/
