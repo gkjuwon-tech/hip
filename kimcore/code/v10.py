@@ -61,7 +61,8 @@ def prim_costs(W, n):
     lg = W[:n].astype(float); m = lg.max()
     lp = lg - (m + math.log(np.exp(lg - m).sum()))
     c = np.clip(np.round(-lp * 0.75), 1, 6).astype(int)
-    vlp = W[-1] - (m + math.log(np.exp(lg - m).sum() + math.exp(W[-1] - m)))
+    m2 = max(m, float(W[-1]))                     # 변수 가중치가 커도 넘치지 않게 (안정적 logsumexp)
+    vlp = W[-1] - (m2 + math.log(np.exp(lg - m2).sum() + math.exp(W[-1] - m2)))
     return c, int(np.clip(round(-vlp * 0.75), 1, 4))
 
 # ------------------------------------------------------------------ 한 문맥에서 아래에서 위로 쌓기
