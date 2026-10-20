@@ -28,6 +28,7 @@ ap.add_argument("--out", default=os.path.join(lib.HERE, "renders", "frame_"))
 ap.add_argument("--save", default=None)
 ap.add_argument("--bpm", type=float, default=None)
 ap.add_argument("--offset", type=float, default=None)
+ap.add_argument("--font", default=None, help="8bit or 16bit")
 ap.add_argument("--still", default=None, help="comma list of beats to render as stills")
 args = ap.parse_args(argv)
 if args.bpm:
@@ -38,6 +39,8 @@ if args.offset is not None:
 from lib import F, B, lerp, pulse, look_quat, fcurves, key, new_collection, set_active_collection  # noqa: E402
 import shots  # noqa: E402
 from shots import FX, SHOTS  # noqa: E402
+if args.font:
+    shots.FONT = args.font
 
 # -----------------------------------------------------------------------------
 # Fresh scene
@@ -63,18 +66,6 @@ sc.frame_start = 1
 sc.frame_end = F_END
 sc.render.fps = lib.FPS
 
-# -----------------------------------------------------------------------------
-# Global groove: generic trap grid until we have the real stems.
-# Kick on 1 / the "and" of 2 / 3, snare on 2 & 4 (half-time feel at 140).
-# -----------------------------------------------------------------------------
-b = shots.PRE
-while b < END_BEAT:
-    for k in (0, 1.5, 2.5):
-        FX["pump"].append((b + k, 0.35, 0.3))
-    for sn in (1, 3):
-        FX["shake"].append((b + sn, 0.18, 0.25))
-    b += 4
-
 
 def fx(kind, beat_now):
     return sum(a * pulse(beat_now, t, 0.0, d) for t, a, d in FX[kind])
@@ -98,9 +89,6 @@ cam_d.clip_end = 900
 cam = bpy.data.objects.new("CAM", cam_d)
 sc.collection.objects.link(cam)
 sc.camera = cam
-for s_ in built:
-    for hl in s_.headlights:
-        hl.parent = cam
 
 import random  # noqa: E402
 rng = random.Random(7)
@@ -161,29 +149,14 @@ for s in built[1:]:
                     kp.interpolation = "CONSTANT"
 
 # -----------------------------------------------------------------------------
-# World: near-black with volumetric haze, tinted per shot, flashes.
+# World: flat paper white. No fog, no flashes: the type does the work.
 # -----------------------------------------------------------------------------
-world = bpy.data.worlds.new("night")
+world = bpy.data.worlds.new("paper")
 sc.world = world
 world.use_nodes = True
-wn = world.node_tree
-bg = wn.nodes["Background"]
+bg = world.node_tree.nodes["Background"]
+bg.inputs[0].default_value = (*built[0].tint, 1)
 bg.inputs[1].default_value = 1.0
-vol = wn.nodes.new("ShaderNodeVolumeScatter")
-vol.inputs["Anisotropy"].default_value = 0.6
-wn.links.new(vol.outputs[0], wn.nodes["World Output"].inputs["Volume"])
-RED = Vector((0.5, 0.0, 0.01))
-for fr in range(1, F_END + 1):
-    bn = B(fr)
-    s = shot_at(bn)
-    tint = Vector(s.tint)
-    c = tint + RED * min(1.0, fx("tint", bn))
-    bg.inputs[0].default_value = (*c, 1)
-    bg.inputs[0].keyframe_insert("default_value", frame=fr)
-    vol.inputs["Density"].default_value = s.fog
-    vol.inputs["Density"].keyframe_insert("default_value", frame=fr)
-    sc.view_settings.exposure = 2.2 * min(3.0, fx("flash", bn))
-    sc.view_settings.keyframe_insert("exposure", frame=fr)
 
 # -----------------------------------------------------------------------------
 # Render settings
@@ -203,47 +176,12 @@ ee.use_raytracing = True
 ee.ray_tracing_method = "SCREEN"
 ee.ray_tracing_options.resolution_scale = "2"
 ee.use_shadows = True
-ee.volumetric_tile_size = "8"
-ee.volumetric_samples = 48
-ee.volumetric_start = 0.5
-ee.volumetric_end = 160
-ee.use_volumetric_shadows = False
 ee.use_fast_gi = False
-sc.view_settings.view_transform = "AgX"
-sc.view_settings.look = "AgX - Medium High Contrast"
+sc.view_settings.view_transform = "Standard"
+sc.view_settings.look = "None"
 
-# Compositor: bloom, animated chromatic aberration, vignette, grain-free.
-sc.use_nodes = True
-nt = sc.node_tree
-nt.nodes.clear()
-rl = nt.nodes.new("CompositorNodeRLayers")
-glare = nt.nodes.new("CompositorNodeGlare")
-glare.glare_type = "BLOOM"
-glare.quality = "HIGH"
-glare.inputs["Threshold"].default_value = 0.9
-glare.inputs["Strength"].default_value = 0.6
-glare.inputs["Size"].default_value = 0.7
-lens_n = nt.nodes.new("CompositorNodeLensdist")
-lens_n.inputs["Distortion"].default_value = -0.012
-ell = nt.nodes.new("CompositorNodeEllipseMask")
-ell.width, ell.height = 1.25, 1.25
-blur = nt.nodes.new("CompositorNodeBlur")
-blur.filter_type = "GAUSS"
-blur.size_x = blur.size_y = 220
-mix = nt.nodes.new("CompositorNodeMixRGB")
-mix.blend_type = "MULTIPLY"
-mix.inputs[0].default_value = 0.65
-comp = nt.nodes.new("CompositorNodeComposite")
-nt.links.new(rl.outputs["Image"], glare.inputs["Image"])
-nt.links.new(glare.outputs["Image"], lens_n.inputs["Image"])
-nt.links.new(lens_n.outputs["Image"], mix.inputs[1])
-nt.links.new(ell.outputs["Mask"], blur.inputs["Image"])
-nt.links.new(blur.outputs["Image"], mix.inputs[2])
-nt.links.new(mix.outputs["Image"], comp.inputs["Image"])
-disp = lens_n.inputs["Dispersion"]
-for fr in range(1, F_END + 1):
-    disp.default_value = min(0.25, 0.012 + 0.07 * fx("ca", B(fr)))
-    disp.keyframe_insert("default_value", frame=fr)
+# No compositing: what EEVEE draws is what you get.
+sc.use_nodes = False
 
 print(f"[autopilot] built {len(built)} shots, {F_END} frames @ {lib.FPS}fps, {lib.BPM} BPM")
 for s in built:
