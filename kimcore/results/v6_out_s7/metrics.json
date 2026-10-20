@@ -1,0 +1,633 @@
+{
+ "config": {
+  "SEED": 7,
+  "GENS": 24,
+  "WORLDS_TRAIN": 160,
+  "WORLDS_PER_GEN": 12,
+  "PROBS_PER_WORLD": 4,
+  "TRAIN_BUDGET": 60,
+  "EVAL_BUDGET": 35,
+  "MAX_INFL": 2,
+  "INFL_SUB_MAX": 6,
+  "MAX_SIZE_SLACK": 8,
+  "EVAL_EVERY": 4,
+  "WORKERS": 4,
+  "MAX_WAFFLES": 40,
+  "ADAPT_PROBS": 48,
+  "D": 64
+ },
+ "control": {
+  "acc": 44.53125,
+  "by": {
+   "bool4": [
+    8,
+    16
+   ],
+   "z5field": [
+    8,
+    16
+   ],
+   "s3group": [
+    5,
+    16
+   ],
+   "chain": [
+    11,
+    32
+   ],
+   "affine": [
+    15,
+    16
+   ],
+   "rand": [
+    10,
+    32
+   ]
+  },
+  "breaches": 0,
+  "sbreach": 0,
+  "steps": 2.6315789473684212
+ },
+ "gens": [
+  {
+   "gen": 1,
+   "rate": 0.9583333333333334,
+   "difficulty": 2,
+   "valid": 100.0,
+   "new_waffles": 0,
+   "infl": 9,
+   "cond": 4,
+   "pl": 0.5751630408580726,
+   "vl": 0.4886881587902705,
+   "rollback": false,
+   "secs": 13.239220380783081
+  },
+  {
+   "gen": 2,
+   "rate": 0.9791666666666666,
+   "difficulty": 3,
+   "valid": 100.0,
+   "new_waffles": 1,
+   "infl": 10,
+   "cond": 1,
+   "pl": 0.20432482168854524,
+   "vl": 0.477724107503891,
+   "rollback": false,
+   "secs": 16.757779121398926
+  },
+  {
+   "gen": 3,
+   "rate": 1.0,
+   "difficulty": 4,
+   "valid": 96.66666666666667,
+   "new_waffles": 3,
+   "infl": 10,
+   "cond": 2,
+   "pl": 0.3983482821037372,
+   "vl": 0.5460002398490906,
+   "rollback": false,
+   "secs": 18.624372482299805
+  },
+  {
+   "gen": 4,
+   "rate": 0.9583333333333334,
+   "difficulty": 5,
+   "valid": 100.0,
+   "new_waffles": 0,
+   "infl": 9,
+   "cond": 4,
+   "pl": 0.37720833979547025,
+   "vl": 0.5597476683060328,
+   "rollback": false,
+   "secs": 22.376689910888672,
+   "test": 90.625,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     12,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     28,
+     32
+    ],
+    "affine": [
+     15,
+     16
+    ],
+    "rand": [
+     29,
+     32
+    ]
+   },
+   "breaches": 0
+  },
+  {
+   "gen": 5,
+   "rate": 0.9583333333333334,
+   "difficulty": 6,
+   "valid": 100.0,
+   "new_waffles": 1,
+   "infl": 6,
+   "cond": 5,
+   "pl": 0.33542760776976743,
+   "vl": 0.5601525803407034,
+   "rollback": false,
+   "secs": 21.83380961418152
+  },
+  {
+   "gen": 6,
+   "rate": 0.9791666666666666,
+   "difficulty": 7,
+   "valid": 96.66666666666667,
+   "new_waffles": 1,
+   "infl": 6,
+   "cond": 0,
+   "pl": 0.3521366055806478,
+   "vl": 0.5621514983971914,
+   "rollback": false,
+   "secs": 22.960426092147827
+  },
+  {
+   "gen": 7,
+   "rate": 0.9375,
+   "difficulty": 8,
+   "valid": 96.66666666666667,
+   "new_waffles": 5,
+   "infl": 6,
+   "cond": 0,
+   "pl": 0.3549922546123465,
+   "vl": 0.5808528969685237,
+   "rollback": false,
+   "secs": 26.6730899810791
+  },
+  {
+   "gen": 8,
+   "rate": 0.9375,
+   "difficulty": 9,
+   "valid": 96.66666666666667,
+   "new_waffles": 2,
+   "infl": 8,
+   "cond": 3,
+   "pl": 0.3774218621850014,
+   "vl": 0.5748914480209351,
+   "rollback": false,
+   "secs": 25.77363419532776,
+   "test": 91.40625,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     12,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     27,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     30,
+     32
+    ]
+   },
+   "breaches": 0
+  },
+  {
+   "gen": 9,
+   "rate": 0.9166666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 2,
+   "infl": 11,
+   "cond": 7,
+   "pl": 0.41370782524347305,
+   "vl": 0.5774005687236786,
+   "rollback": false,
+   "secs": 27.26740336418152
+  },
+  {
+   "gen": 10,
+   "rate": 0.875,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 9,
+   "infl": 8,
+   "cond": 1,
+   "pl": 0.3647812874615192,
+   "vl": 0.5714385787645976,
+   "rollback": false,
+   "secs": 27.855637788772583
+  },
+  {
+   "gen": 11,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 6,
+   "infl": 10,
+   "cond": 0,
+   "pl": 0.3977497285604477,
+   "vl": 0.5771652152140935,
+   "rollback": false,
+   "secs": 26.621248722076416
+  },
+  {
+   "gen": 12,
+   "rate": 0.9375,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 5,
+   "infl": 10,
+   "cond": 10,
+   "pl": 0.3922096540033817,
+   "vl": 0.5709731636444727,
+   "rollback": false,
+   "secs": 28.18407368659973,
+   "test": 94.53125,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     14,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     27,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     32,
+     32
+    ]
+   },
+   "breaches": 0
+  },
+  {
+   "gen": 13,
+   "rate": 0.9375,
+   "difficulty": 10,
+   "valid": 96.66666666666667,
+   "new_waffles": 8,
+   "infl": 13,
+   "cond": 3,
+   "pl": 0.41757178366184233,
+   "vl": 0.5787364766995112,
+   "rollback": false,
+   "secs": 27.584375858306885
+  },
+  {
+   "gen": 14,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 4,
+   "infl": 6,
+   "cond": 3,
+   "pl": 0.39742999042073884,
+   "vl": 0.5792943487564722,
+   "rollback": false,
+   "secs": 27.374183177947998
+  },
+  {
+   "gen": 15,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 12,
+   "infl": 13,
+   "cond": 0,
+   "pl": 0.42167537783583003,
+   "vl": 0.58566788037618,
+   "rollback": false,
+   "secs": 27.072198629379272
+  },
+  {
+   "gen": 16,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 1,
+   "infl": 6,
+   "cond": 3,
+   "pl": 0.4288563253978888,
+   "vl": 0.5872760784626007,
+   "rollback": false,
+   "secs": 29.266575574874878,
+   "test": 96.09375,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     13,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     30,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     32,
+     32
+    ]
+   },
+   "breaches": 0
+  },
+  {
+   "gen": 17,
+   "rate": 0.9583333333333334,
+   "difficulty": 10,
+   "valid": 96.66666666666667,
+   "new_waffles": 4,
+   "infl": 9,
+   "cond": 5,
+   "pl": 0.4045122111340364,
+   "vl": 0.5835463772217433,
+   "rollback": false,
+   "secs": 28.809710264205933
+  },
+  {
+   "gen": 18,
+   "rate": 1.0,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 10,
+   "infl": 6,
+   "cond": 8,
+   "pl": 0.44828589523832,
+   "vl": 0.5943756632010142,
+   "rollback": false,
+   "secs": 28.883896112442017
+  },
+  {
+   "gen": 19,
+   "rate": 0.9583333333333334,
+   "difficulty": 10,
+   "valid": 96.66666666666667,
+   "new_waffles": 11,
+   "infl": 8,
+   "cond": 4,
+   "pl": 0.4504035887122154,
+   "vl": 0.5928769493103028,
+   "rollback": false,
+   "secs": 33.241575956344604
+  },
+  {
+   "gen": 20,
+   "rate": 1.0,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 9,
+   "infl": 4,
+   "cond": 5,
+   "pl": 0.4205192266404629,
+   "vl": 0.5967329760392507,
+   "rollback": false,
+   "secs": 27.495769739151,
+   "test": 94.53125,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     13,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     29,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     31,
+     32
+    ]
+   },
+   "breaches": 0
+  },
+  {
+   "gen": 21,
+   "rate": 0.9166666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 6,
+   "infl": 13,
+   "cond": 2,
+   "pl": 0.41264668919146064,
+   "vl": 0.6007478455702464,
+   "rollback": false,
+   "secs": 28.805524587631226
+  },
+  {
+   "gen": 22,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 9,
+   "infl": 7,
+   "cond": 0,
+   "pl": 0.45612072333693504,
+   "vl": 0.5963679647445679,
+   "rollback": false,
+   "secs": 32.22808623313904
+  },
+  {
+   "gen": 23,
+   "rate": 0.9791666666666666,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 7,
+   "infl": 9,
+   "cond": 0,
+   "pl": 0.44201855346560476,
+   "vl": 0.5984945750236511,
+   "rollback": false,
+   "secs": 29.762880563735962
+  },
+  {
+   "gen": 24,
+   "rate": 0.9583333333333334,
+   "difficulty": 10,
+   "valid": 100.0,
+   "new_waffles": 7,
+   "infl": 6,
+   "cond": 2,
+   "pl": 0.43015733405947687,
+   "vl": 0.6000680204232534,
+   "rollback": false,
+   "secs": 30.127799034118652,
+   "test": 95.3125,
+   "test_by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     14,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     28,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     32,
+     32
+    ]
+   },
+   "breaches": 0
+  }
+ ],
+ "final": {
+  "control": {
+   "acc": 44.53125,
+   "by": {
+    "bool4": [
+     8,
+     16
+    ],
+    "z5field": [
+     8,
+     16
+    ],
+    "s3group": [
+     5,
+     16
+    ],
+    "chain": [
+     11,
+     32
+    ],
+    "affine": [
+     15,
+     16
+    ],
+    "rand": [
+     10,
+     32
+    ]
+   },
+   "breaches": 0,
+   "sbreach": 0,
+   "steps": 2.6315789473684212
+  },
+  "zero": {
+   "acc": 95.3125,
+   "by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     14,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     28,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     32,
+     32
+    ]
+   },
+   "breaches": 0,
+   "sbreach": 0,
+   "steps": 4.918032786885246
+  },
+  "adapted": {
+   "acc": 96.09375,
+   "by": {
+    "bool4": [
+     16,
+     16
+    ],
+    "z5field": [
+     14,
+     16
+    ],
+    "s3group": [
+     16,
+     16
+    ],
+    "chain": [
+     29,
+     32
+    ],
+    "affine": [
+     16,
+     16
+    ],
+    "rand": [
+     32,
+     32
+    ]
+   },
+   "breaches": 0,
+   "sbreach": 0,
+   "steps": 4.4227642276422765
+  },
+  "no_infl": 77.34375,
+  "sensorless_breaches": 3
+ }
+}

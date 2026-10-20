@@ -1,0 +1,50 @@
+# Task Assignment: Phase A Proposal — Curiosity / World-Model RSI
+
+You are the Lead Designer for the `curiosity` philosophy:
+- Philosophy: Curiosity / world-model RSI
+- Target file: `/home/user/hip/agy-blueprint/work/proposal_curiosity_v1.md`
+- Your working directory: `/home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_curiosity/`
+- Binding specification: `/home/user/hip/agy-blueprint/BRIEF.md` (read completely)
+- Original request: `/home/user/hip/agy-blueprint/ORIGINAL_REQUEST.md`
+- Verified research files in `/home/user/hip/asi-blueprint/research/`:
+  `reason_baseline.md`, `rsi.md`, `reason_methods.md`, `io_split.md`, `tiny_sota.md`, `archs.md`, `externalize.md`, `compute.md`, `data.md`.
+
+Concept:
+A JEPA-style latent model predicts problem states and verifier/tool/experiment outcomes; the loop chooses what to learn next by expected learning progress / information gain; later it chooses which real experiments to run (drug-discovery north star).
+
+Mandatory Structure (all 12 sections in exact order, 3,000–5,000 words, English):
+1. Thesis
+2. The RSI Engine (L1-L5, cord-cut criterion, fuel, S-curve staircase & finding next verifier domain, generation compute/time)
+3. Curve-Killer Defenses (mechanism + detector + rollback/kill rule for each)
+4. RSI Metrics Dashboard
+5. The Core as Learner (ASCII diagram, dataflow, structured output schema, parameter table < 100M, non-Transformer justification)
+6. Fair-Play Rules (renderer firewall, direct input reading, RSI integrity)
+7. The Boss Ladder (scoreboard vs reason_baseline.md, G rule margins, future rungs & probabilities)
+8. Bootloader Recipe & Data (licensed data, no GPT-3.5/4 data, 6ND FLOP math vs free quota, T4/TPU notes)
+9. Renderer Choice & Integration
+10. Scaling & North Star (0.1B -> 1B -> 10B transfer, grant acquisition, drug discovery)
+11. Stage-Gated Safety Mechanisms (§6 of BRIEF.md)
+12. First 3 Experiments (weeks 1-4, runnable pseudocode for Exp 1 in weeks 1-2, risk register)
+
+Integrity warning:
+DO NOT CHEAT. All implementations must be genuine. DO NOT hardcode test results, create dummy/facade implementations, or circumvent the intended task. A auditor will independently verify your work. Integrity violations WILL be detected and your work WILL be rejected.
+
+Every claim must be labeled [검증됨: url], [추정], or [가설].
+Write the complete proposal to `/home/user/hip/agy-blueprint/work/proposal_curiosity_v1.md`.
+Write your handoff report to `/home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_curiosity/handoff.md`.
+When finished, send a completion message to orchestrator (`9d100903-3938-4939-8cb4-21dca26a45b4`).
+
+## 2026-10-19T09:08:20Z
+[Message] sender=9d100903-3938-4939-8cb4-21dca26a45b4 priority=MESSAGE_PRIORITY_HIGH
+You are the Lead Designer for the 'curiosity' philosophy (Curiosity / world-model RSI) on the Aphasic Genius RSI Engine project.
+
+Your assigned directory: /home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_curiosity/
+Your target output file: /home/user/hip/agy-blueprint/work/proposal_curiosity_v1.md
+Your handoff file: /home/user/hip/agy-blueprint/.agents/teamwork/worker_proposal_curiosity/handoff.md
+Orchestrator Conversation ID to message on completion: 9d100903-3938-4939-8cb4-21dca26a45b4
+
+## 2026-10-19T09:38:31Z
+[Message] sender=9d100903-3938-4939-8cb4-21dca26a45b4 priority=MESSAGE_PRIORITY_HIGH
+Context: Phase A Proposal Submission
+Content: Binding instruction from User: Word counts are soft guidance only. Stop counting or trimming words. Submit your current proposal (`work/proposal_curiosity_v1.md`) and handoff report now.
+Action: Finalize handoff and send completion message immediately.
