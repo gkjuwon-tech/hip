@@ -479,6 +479,132 @@
    "loss": 2.05576794664065,
    "secs": 90.09532380104065,
    "gen_depth": 7
+  },
+  {
+   "gen": 26,
+   "rate": 0.3333333333333333,
+   "overfit": 3,
+   "lib": 10,
+   "max_depth": 3,
+   "max_base_solved": 31,
+   "mean_base_solved": 18.275,
+   "compression": 2.4233876683203404,
+   "corpus": 1525,
+   "loss": 2.061236248811086,
+   "secs": 94.92647004127502,
+   "gen_depth": 7
+  },
+  {
+   "gen": 27,
+   "rate": 0.35833333333333334,
+   "overfit": 5,
+   "lib": 10,
+   "max_depth": 3,
+   "max_base_solved": 34,
+   "mean_base_solved": 15.790697674418604,
+   "compression": 2.446462978254886,
+   "corpus": 1568,
+   "loss": 2.0502855610847472,
+   "secs": 79.89311361312866,
+   "gen_depth": 7
+  },
+  {
+   "gen": 28,
+   "rate": 0.375,
+   "overfit": 3,
+   "lib": 10,
+   "max_depth": 3,
+   "max_base_solved": 34,
+   "mean_base_solved": 17.22222222222222,
+   "compression": 2.4767690253671564,
+   "corpus": 1613,
+   "loss": 2.261998548905055,
+   "secs": 84.9114236831665,
+   "gen_depth": 7,
+   "probe": 88.0,
+   "probe_by": {
+    "쉬움": [
+     233,
+     236
+    ],
+    "고생": [
+     15,
+     16
+    ],
+    "0세대 실패": [
+     16,
+     48
+    ]
+   },
+   "probe_over": 16
+  },
+  {
+   "gen": 29,
+   "rate": 0.39166666666666666,
+   "overfit": 2,
+   "lib": 10,
+   "max_depth": 3,
+   "max_base_solved": 36,
+   "mean_base_solved": 16.46808510638298,
+   "compression": 2.5038870173620107,
+   "corpus": 1660,
+   "loss": 2.0964067018032075,
+   "secs": 79.7274215221405,
+   "gen_depth": 7
+  },
+  {
+   "gen": 30,
+   "rate": 0.35,
+   "overfit": 2,
+   "lib": 10,
+   "max_depth": 3,
+   "max_base_solved": 32,
+   "mean_base_solved": 15.119047619047619,
+   "compression": 2.5167065943764975,
+   "corpus": 1702,
+   "loss": 2.0217636263370515,
+   "secs": 83.24576592445374,
+   "gen_depth": 7,
+   "probe": 87.33333333333333,
+   "probe_by": {
+    "쉬움": [
+     232,
+     236
+    ],
+    "고생": [
+     15,
+     16
+    ],
+    "0세대 실패": [
+     15,
+     48
+    ]
+   },
+   "probe_over": 16
   }
- ]
+ ],
+ "final": {
+  "probe": 87.33333333333333,
+  "probe0": 84.0,
+  "probe_by": {
+   "쉬움": [
+    232,
+    236
+   ],
+   "고생": [
+    15,
+    16
+   ],
+   "0세대 실패": [
+    15,
+    48
+   ]
+  },
+  "past_vs_now": [
+   12,
+   34
+  ],
+  "concepts": 10,
+  "max_depth": 3
+ }
 }

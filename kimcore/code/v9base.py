@@ -527,9 +527,9 @@ def frag_leaves(f):
     if f[0] == 'l': return frag_leaves(f[1])
     return 0 if f[0] == 'h' else 1
 
-def invent(lib, corpus, rng, gen):
+def invent(lib, corpus, rng, gen, gate=None):
     """corpus: {task_id: prog}. 가장 압축 이득이 큰 틀을 개념으로 등록. -> 로그 목록"""
-    logs = []; rejected = []
+    logs = []; rejected = []; gate_notes = []
     for _ in range(CFG['MAX_INVENT_PER_GEN']):
         if len(lib) >= CFG['MAX_PRODS']: break
         subs = []
@@ -575,6 +575,11 @@ def invent(lib, corpus, rng, gen):
             sg = behavior(val, tt)
             if sg is not None and (sg in sigs or trivial_behavior(sg, tt)):
                 rejected.append(f"{show(body, lib)} (이미 아는 동작/시시함)"); continue
+            if gate is not None:
+                ok, why = gate(body, tt, val, gain / max(1, before))
+                if not ok:
+                    rejected.append(f"{show(body, lib)} ({why})"); continue
+                gate_notes.append(why)
             best = (f, nh, body, tt); break
         if best is None: break
         f, nh, body, tt = best
@@ -588,7 +593,8 @@ def invent(lib, corpus, rng, gen):
         idx = lib.add(name, tt, val, body, depth, max(1, bl - nh))
         for tid in list(corpus): corpus[tid] = rewrite(corpus[tid], f, idx, nh)[0]
         after = sum(leaves(p) for p in corpus.values())
-        logs.append(f"  💡 [개념 발명] {name} : {tshow(tt)}  =  {show(body, lib)}   (압축 {before}→{after}, 층 {depth})")
+        logs.append(f"  💡 [개념 발명] {name} : {tshow(tt)}  =  {show(body, lib)}   (압축 {before}→{after}, 층 {depth})"
+                    + (f" [{gate_notes[-1]}]" if gate_notes else ''))
     if rejected:
         logs.append(f"  🗑️ [의미 중복/시시한 개념 거절 {len(rejected)}개] 예: {rejected[0]}")
     return logs

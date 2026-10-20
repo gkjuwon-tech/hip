@@ -1,0 +1,278 @@
+{
+ "config": {
+  "SEED": 1234,
+  "GENS": 12,
+  "TASKS_PER_GEN": 120,
+  "SEARCH_BUDGET": 4000,
+  "PROBE_PER_BIN": 30,
+  "WORKERS": 4,
+  "MAX_INVENT_PER_GEN": 3,
+  "MAX_PRODS": 160,
+  "DREAMS": 600,
+  "TIME_CAP": 1.0,
+  "PROBE_N": 300,
+  "EASY_KEEP": 0.2,
+  "QUICK": 150,
+  "COST_STEP": 1.5,
+  "MAX_COST": 24.0,
+  "EPS": 0.08,
+  "MAX_DEPTH": 7
+ },
+ "probe0": 93.33333333333333,
+ "probe0_by": {
+  "쉬움": [
+   229,
+   229
+  ],
+  "고생": [
+   51,
+   51
+  ],
+  "0세대 실패": [
+   0,
+   20
+  ]
+ },
+ "gens": [
+  {
+   "gen": 1,
+   "rate": 0.6583333333333333,
+   "overfit": 5,
+   "lib": 1,
+   "max_depth": 1,
+   "max_base_solved": 10,
+   "mean_base_solved": 5.367088607594937,
+   "compression": 1.0216867469879518,
+   "corpus": 79,
+   "loss": 1.9748532728354136,
+   "secs": 43.09644794464111,
+   "gen_depth": 3
+  },
+  {
+   "gen": 2,
+   "rate": 0.5916666666666667,
+   "overfit": 5,
+   "lib": 4,
+   "max_depth": 1,
+   "max_base_solved": 15,
+   "mean_base_solved": 6.605633802816901,
+   "compression": 1.2334254143646408,
+   "corpus": 150,
+   "loss": 1.9940583244959513,
+   "secs": 65.44919419288635,
+   "gen_depth": 4
+  },
+  {
+   "gen": 3,
+   "rate": 0.6416666666666667,
+   "overfit": 8,
+   "lib": 5,
+   "max_depth": 2,
+   "max_base_solved": 17,
+   "mean_base_solved": 7.402597402597403,
+   "compression": 1.3596654275092936,
+   "corpus": 227,
+   "loss": 1.9975212534268698,
+   "secs": 57.30276679992676,
+   "gen_depth": 5
+  },
+  {
+   "gen": 4,
+   "rate": 0.6666666666666666,
+   "overfit": 6,
+   "lib": 5,
+   "max_depth": 2,
+   "max_base_solved": 24,
+   "mean_base_solved": 10.3,
+   "compression": 1.5600272851296044,
+   "corpus": 307,
+   "loss": 2.039199461936951,
+   "secs": 63.20150351524353,
+   "gen_depth": 6,
+   "probe": 92.66666666666667,
+   "probe_by": {
+    "쉬움": [
+     229,
+     229
+    ],
+    "고생": [
+     47,
+     51
+    ],
+    "0세대 실패": [
+     2,
+     20
+    ]
+   },
+   "probe_over": 10
+  },
+  {
+   "gen": 5,
+   "rate": 0.7333333333333333,
+   "overfit": 3,
+   "lib": 6,
+   "max_depth": 2,
+   "max_base_solved": 28,
+   "mean_base_solved": 9.568181818181818,
+   "compression": 1.6696905016008539,
+   "corpus": 395,
+   "loss": 2.8091358852386477,
+   "secs": 68.74036312103271,
+   "gen_depth": 7
+  },
+  {
+   "gen": 6,
+   "rate": 0.5833333333333334,
+   "overfit": 4,
+   "lib": 6,
+   "max_depth": 2,
+   "max_base_solved": 27,
+   "mean_base_solved": 11.514285714285714,
+   "compression": 1.7959835691465085,
+   "corpus": 465,
+   "loss": 2.0544011199474337,
+   "secs": 71.96326947212219,
+   "gen_depth": 7
+  },
+  {
+   "gen": 7,
+   "rate": 0.6666666666666666,
+   "overfit": 1,
+   "lib": 6,
+   "max_depth": 2,
+   "max_base_solved": 35,
+   "mean_base_solved": 12.625,
+   "compression": 1.8823753330795585,
+   "corpus": 545,
+   "loss": 1.9829184198379517,
+   "secs": 77.81136560440063,
+   "gen_depth": 7
+  },
+  {
+   "gen": 8,
+   "rate": 0.65,
+   "overfit": 6,
+   "lib": 6,
+   "max_depth": 2,
+   "max_base_solved": 30,
+   "mean_base_solved": 11.371794871794872,
+   "compression": 1.9414114513981358,
+   "corpus": 623,
+   "loss": 1.9737046058972676,
+   "secs": 68.2590320110321,
+   "gen_depth": 7,
+   "probe": 89.66666666666667,
+   "probe_by": {
+    "쉬움": [
+     224,
+     229
+    ],
+    "고생": [
+     45,
+     51
+    ],
+    "0세대 실패": [
+     0,
+     20
+    ]
+   },
+   "probe_over": 11
+  },
+  {
+   "gen": 9,
+   "rate": 0.55,
+   "overfit": 5,
+   "lib": 7,
+   "max_depth": 3,
+   "max_base_solved": 35,
+   "mean_base_solved": 13.606060606060606,
+   "compression": 2.0246690734055357,
+   "corpus": 689,
+   "loss": 2.014910060962041,
+   "secs": 86.87376475334167,
+   "gen_depth": 7
+  },
+  {
+   "gen": 10,
+   "rate": 0.625,
+   "overfit": 7,
+   "lib": 8,
+   "max_depth": 3,
+   "max_base_solved": 43,
+   "mean_base_solved": 17.826666666666668,
+   "compression": 2.1951020408163266,
+   "corpus": 764,
+   "loss": 2.0511377743879953,
+   "secs": 70.7961494922638,
+   "gen_depth": 7
+  },
+  {
+   "gen": 11,
+   "rate": 0.6166666666666667,
+   "overfit": 3,
+   "lib": 8,
+   "max_depth": 3,
+   "max_base_solved": 47,
+   "mean_base_solved": 19.33783783783784,
+   "compression": 2.33194205745151,
+   "corpus": 838,
+   "loss": 2.01078711549441,
+   "secs": 74.16825127601624,
+   "gen_depth": 7
+  },
+  {
+   "gen": 12,
+   "rate": 0.55,
+   "overfit": 7,
+   "lib": 8,
+   "max_depth": 3,
+   "max_base_solved": 53,
+   "mean_base_solved": 16.272727272727273,
+   "compression": 2.3864559819413094,
+   "corpus": 904,
+   "loss": 2.001066114107768,
+   "secs": 70.79989385604858,
+   "gen_depth": 7,
+   "probe": 91.0,
+   "probe_by": {
+    "쉬움": [
+     227,
+     229
+    ],
+    "고생": [
+     46,
+     51
+    ],
+    "0세대 실패": [
+     0,
+     20
+    ]
+   },
+   "probe_over": 11
+  }
+ ],
+ "final": {
+  "probe": 91.66666666666667,
+  "probe0": 93.33333333333333,
+  "probe_by": {
+   "쉬움": [
+    227,
+    229
+   ],
+   "고생": [
+    48,
+    51
+   ],
+   "0세대 실패": [
+    0,
+    20
+   ]
+  },
+  "past_vs_now": [
+   54,
+   52
+  ],
+  "concepts": 8,
+  "max_depth": 3
+ }
+}
