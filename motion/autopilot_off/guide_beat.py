@@ -13,6 +13,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("out")
 ap.add_argument("--bpm", type=float, default=140.0)
 ap.add_argument("--beats", type=float, default=100.0)
+ap.add_argument("--pre", type=float, default=0.0, help="beats of silence before the groove")
 args = ap.parse_args()
 
 SR = 44100
@@ -44,7 +45,7 @@ def hat(t):
     return 0.12 * (rng.random() * 2 - 1) * math.exp(-t * 90)
 
 
-b = 0.0
+b = args.pre
 while b < args.beats:
     for k in (0, 1.5, 2.5):
         add((b + k) * spb, kick808, 0.9)

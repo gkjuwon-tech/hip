@@ -514,3 +514,29 @@ def look_quat(pos, target, roll=0.0):
     if roll:
         q = q @ Quaternion((0, 0, 1), roll)
     return q
+
+
+def spline(keys, t):
+    """Smooth (Catmull-Rom / Hermite) interpolation through [(time, value), ...].
+    Values may be floats or Vectors; ends ease in/out; clamps outside the range."""
+    if t <= keys[0][0]:
+        return keys[0][1]
+    if t >= keys[-1][0]:
+        return keys[-1][1]
+    i = max(j for j in range(len(keys) - 1) if keys[j][0] <= t)
+    t0, p0 = keys[i]
+    t1, p1 = keys[i + 1]
+
+    def tangent(k):
+        if k == 0 or k == len(keys) - 1:
+            return p0 * 0
+        (ta, pa), (tb, pb) = keys[k - 1], keys[k + 1]
+        return (pb - pa) / (tb - ta)
+    m0, m1 = tangent(i), tangent(i + 1)
+    h = t1 - t0
+    s = (t - t0) / h
+    h00 = 2 * s ** 3 - 3 * s ** 2 + 1
+    h10 = s ** 3 - 2 * s ** 2 + s
+    h01 = -2 * s ** 3 + 3 * s ** 2
+    h11 = s ** 3 - s ** 2
+    return p0 * h00 + m0 * (h10 * h) + p1 * h01 + m1 * (h11 * h)

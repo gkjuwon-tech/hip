@@ -1,4 +1,4 @@
-"""AUTOPILOT OFF — build the whole piece in Blender and (optionally) render it.
+"""AUTOPILOT OFF — build line 1 in Blender and (optionally) render it.
 
     blender -b --factory-startup -P build.py -- [--render] [--res 1280x720]
         [--samples 16] [--frames 1-1029] [--out renders/frame_] [--save out.blend]
@@ -67,7 +67,7 @@ sc.render.fps = lib.FPS
 # Global groove: generic trap grid until we have the real stems.
 # Kick on 1 / the "and" of 2 / 3, snare on 2 & 4 (half-time feel at 140).
 # -----------------------------------------------------------------------------
-b = 0.0
+b = shots.PRE
 while b < END_BEAT:
     for k in (0, 1.5, 2.5):
         FX["pump"].append((b + k, 0.35, 0.3))
@@ -98,6 +98,9 @@ cam_d.clip_end = 900
 cam = bpy.data.objects.new("CAM", cam_d)
 sc.collection.objects.link(cam)
 sc.camera = cam
+for s_ in built:
+    for hl in s_.headlights:
+        hl.parent = cam
 
 import random  # noqa: E402
 rng = random.Random(7)
@@ -157,23 +160,6 @@ for s in built[1:]:
                 if int(round(kp.co.x)) == cut - 1:
                     kp.interpolation = "CONSTANT"
 
-# depth of field only for the rack-focus shot
-see = [s for s in built if s.name == "see"][0]
-cam_d.dof.use_dof = False
-cam_d.dof.aperture_fstop = 1.2
-cam_d.keyframe_insert("dof.use_dof", frame=1)
-cam_d.dof.use_dof = True
-cam_d.keyframe_insert("dof.use_dof", frame=F(see.b0))
-for fr in range(F(see.b0), F(see.b1) + 1):
-    cam_d.dof.focus_distance = see.focus(B(fr) - see.b0)
-    cam_d.keyframe_insert("dof.focus_distance", frame=fr)
-cam_d.dof.use_dof = False
-cam_d.keyframe_insert("dof.use_dof", frame=F(see.b1))
-for fc in fcurves(cam_d):
-    if fc.data_path == "dof.use_dof":
-        for kp in fc.keyframe_points:
-            kp.interpolation = "CONSTANT"
-
 # -----------------------------------------------------------------------------
 # World: near-black with volumetric haze, tinted per shot, flashes.
 # -----------------------------------------------------------------------------
@@ -196,94 +182,8 @@ for fr in range(1, F_END + 1):
     bg.inputs[0].keyframe_insert("default_value", frame=fr)
     vol.inputs["Density"].default_value = s.fog
     vol.inputs["Density"].keyframe_insert("default_value", frame=fr)
-    sc.view_settings.exposure = 2.2 * min(3.0, fx("flash", bn)) - 4.0 * lib.prog(bn, END_BEAT - 0.75, END_BEAT)
+    sc.view_settings.exposure = 2.2 * min(3.0, fx("flash", bn))
     sc.view_settings.keyframe_insert("exposure", frame=fr)
-
-# -----------------------------------------------------------------------------
-# HUD — parented to the camera, scale tracks lens so it stays screen-locked.
-# -----------------------------------------------------------------------------
-hud_col = new_collection("HUD")
-set_active_collection(hud_col)
-hud = lib.empty("HUD", loc=(0, 0, -1), parent=cam)
-hud_m = lib.mat_emit("hud", (1, 1, 1), 1.6)
-hud_red = lib.mat_emit("hud.red", (1, 0.05, 0.08), 3.0)
-AR = 9 / 16
-
-
-def hud_text(name, body, u, v, size, ax="LEFT", ay="CENTER", mat=hud_m, fnt=lib.MONO):
-    return lib.text(name, body, size=size, fnt=fnt, extrude=0, mat=mat, align_x=ax, align_y=ay,
-                    stand=False, parent=hud, loc=(u, v * AR, 0))
-
-
-h_auto = hud_text("hud.auto", "AUTOPILOT  ON", -0.92, 0.86, 0.034)
-h_batt = hud_text("hud.batt", "BATT 012%", 0.92, 0.86, 0.034, ax="RIGHT")
-h_spd = hud_text("hud.spd", "000 KM/H", -0.92, -0.86, 0.034)
-h_tc = hud_text("hud.tc", "00:00:00", 0.92, -0.86, 0.034, ax="RIGHT", fnt=lib.MONO_R)
-h_lyr = hud_text("hud.lyric", "", 0.0, -0.70, 0.042, ax="CENTER")
-# corner brackets
-brk = lib.m_cube("brk", (1, 1, 1))
-for sx in (-1, 1):
-    for sy in (-1, 1):
-        for horiz in (True, False):
-            o = lib.mesh_obj("hud.brk", brk, hud_m, parent=hud)
-            o.scale = (0.06, 0.003, 0.001) if horiz else (0.003, 0.06 * 1.0, 0.001)
-            o.location = (sx * (0.955 - (0.03 if horiz else 0)), sy * (0.53 - (0 if horiz else 0.03)), 0)
-lens_fc = [fc for fc in fcurves(cam_d) if fc.data_path == "lens"][0]
-for fr in range(1, F_END + 1):
-    hw = (cam_d.sensor_width / 2) / lens_fc.evaluate(fr)
-    hud.scale = (hw, hw, hw)
-    hud.keyframe_insert("scale", frame=fr)
-for fc in fcurves(hud):
-    for kp in fc.keyframe_points:
-        kp.interpolation = "LINEAR"
-
-# per-frame HUD text, precomputed then applied by a frame handler
-lyrics = sorted(FX["lyric"])
-batts = sorted(FX["batt"])
-HUD_FRAMES = {}
-for fr in range(1, F_END + 1):
-    bn = B(fr)
-    ly = ""
-    for t, line in lyrics:
-        if bn >= t:
-            ly = line
-    bv = 12
-    for t, v in batts:
-        if bn >= t:
-            bv = v
-    p, s = cam_pos[fr]
-    pp, ps = cam_pos.get(fr - 1, (p, s))
-    spd = (p - pp).length * lib.FPS * 3.6 if ps is s else None
-    HUD_FRAMES[fr] = (ly, bv, spd, bn)
-
-_last_spd = [0.0]
-
-
-def hud_update(scene, depsgraph=None):
-    fr = scene.frame_current
-    if fr not in HUD_FRAMES:
-        return
-    ly, bv, spd, bn = HUD_FRAMES[fr]
-    h_lyr.data.body = ly
-    h_batt.data.body = "BATT ERROR" if bv < 0 else f"BATT {bv:03d}%"
-    h_batt.data.materials[0] = hud_red if (bv < 0 or bv > 100) else hud_m
-    if spd is not None:
-        _last_spd[0] = 0.7 * _last_spd[0] + 0.3 * min(spd, 999)
-    h_spd.data.body = f"{int(_last_spd[0]):03d} KM/H"
-    sec = (fr - 1) / lib.FPS
-    h_tc.data.body = f"{int(sec // 60):02d}:{int(sec % 60):02d}:{(fr - 1) % lib.FPS:02d}"
-    off = bn >= END_BEAT - 2.5
-    h_auto.data.body = "AUTOPILOT  OFF" if off else "AUTOPILOT  ON"
-    h_auto.data.materials[0] = hud_red if off else hud_m
-
-
-bpy.app.handlers.frame_change_pre.append(hud_update)
-
-# -----------------------------------------------------------------------------
-# Per-shot visibility (keeps EEVEE from paying for 14 shots it can't see)
-# -----------------------------------------------------------------------------
-for s in built:
-    s.finish()
 
 # -----------------------------------------------------------------------------
 # Render settings
