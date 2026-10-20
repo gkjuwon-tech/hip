@@ -28,7 +28,6 @@ ap.add_argument("--out", default=os.path.join(lib.HERE, "renders", "frame_"))
 ap.add_argument("--save", default=None)
 ap.add_argument("--bpm", type=float, default=None)
 ap.add_argument("--offset", type=float, default=None)
-ap.add_argument("--font", default=None, help="8bit or 16bit")
 ap.add_argument("--still", default=None, help="comma list of beats to render as stills")
 args = ap.parse_args(argv)
 if args.bpm:
@@ -39,8 +38,6 @@ if args.offset is not None:
 from lib import F, B, lerp, pulse, look_quat, fcurves, key, new_collection, set_active_collection  # noqa: E402
 import shots  # noqa: E402
 from shots import FX, SHOTS  # noqa: E402
-if args.font:
-    shots.FONT = args.font
 
 # -----------------------------------------------------------------------------
 # Fresh scene
@@ -117,6 +114,8 @@ cam_pos = {}
 for fr in range(1, F_END + 1):
     bn = B(fr)
     s = shot_at(bn)
+    if s.on_twos:  # hold each camera pose for two frames
+        bn = B(shots.twos(fr))
     pos, tgt, lens, roll = s.cam(bn - s.b0)
     pos = Vector(pos) + s.origin
     tgt = Vector(tgt) + s.origin
@@ -154,9 +153,19 @@ for s in built[1:]:
 world = bpy.data.worlds.new("paper")
 sc.world = world
 world.use_nodes = True
-bg = world.node_tree.nodes["Background"]
+wn = world.node_tree
+bg = wn.nodes["Background"]
 bg.inputs[0].default_value = (*built[0].tint, 1)
-bg.inputs[1].default_value = 1.0
+bg.inputs[1].default_value = built[0].world_strength
+# the camera always sees pure paper white; only the lighting uses the dimmer value
+seen = wn.nodes.new("ShaderNodeBackground")
+seen.inputs[0].default_value = (*built[0].tint, 1)
+lp = wn.nodes.new("ShaderNodeLightPath")
+mx = wn.nodes.new("ShaderNodeMixShader")
+wn.links.new(lp.outputs["Is Camera Ray"], mx.inputs[0])
+wn.links.new(bg.outputs[0], mx.inputs[1])
+wn.links.new(seen.outputs[0], mx.inputs[2])
+wn.links.new(mx.outputs[0], wn.nodes["World Output"].inputs["Surface"])
 
 # -----------------------------------------------------------------------------
 # Render settings
@@ -166,16 +175,17 @@ r = sc.render
 r.engine = "BLENDER_EEVEE_NEXT"
 r.resolution_x, r.resolution_y = rx, ry
 r.resolution_percentage = 100
-r.use_motion_blur = True
+r.use_motion_blur = built[0].motion_blur
 r.motion_blur_shutter = 0.45
 r.motion_blur_position = "START"
 r.film_transparent = False
 ee = sc.eevee
 ee.taa_render_samples = args.samples
-ee.use_raytracing = True
+ee.use_raytracing = False
 ee.ray_tracing_method = "SCREEN"
 ee.ray_tracing_options.resolution_scale = "2"
 ee.use_shadows = True
+ee.shadow_resolution_scale = 1.0
 ee.use_fast_gi = False
 sc.view_settings.view_transform = "Standard"
 sc.view_settings.look = "None"
